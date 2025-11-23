@@ -55,4 +55,49 @@
 
 
 
-console.log(import.meta.resolve('http'))
+// console.log(import.meta.resolve('http'))
+
+// -----------------------loading--------------------
+
+// import { count , increment } from "./loading/counter.js";
+// console.log(count); 
+// increment() ;  //원본 변수가 변경되는 것이기에 counter도 바뀜. 
+// console.log(count); 
+// count++;   // original value 안바뀜.  read-only binding. 
+// console.log(count)
+
+//common js는 shallow copy. 
+
+
+// import * as a from './loading/a.js' 
+// import * as b from './loading/b.js'
+// console.log('a ->', a)
+// console.log('b ->', b)
+
+
+// -------------------------------logger2------------------------
+
+
+// import { logger } from './logger2/logger2.js'
+// import './logger2/colorizeLogger2.js' // colorizeLogger가 export를 하지않기에 omit을 생략한 형태로 작성 
+// logger.info('Hello, World!')
+// logger.warn('Free disk space is running low')
+// logger.error('Failed to connect to database')
+// logger.debug('main() is starting')
+
+
+// import {logger } from './logger2/logger2.js'
+// import './logger2/replaceLogger3.js'
+
+// logger.info('msg')
+
+
+
+import loggerModule from './logger2/logger2.js'
+import './logger2/replaceLogger3.js'
+
+
+// import {logger } from './logger2/logger2.js'
+// import './logger2/replaceLogger3.js'
+
+loggerModule.logger.info('hello'); 
