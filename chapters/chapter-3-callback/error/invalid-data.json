@@ -1,0 +1,9 @@
+{
+  "name": "Test User",
+  "permissions": [
+    "read",
+    "write"
+  ],
+  "note": "This JSON is intentionally malformed with a trailing comma"
+  
+}
