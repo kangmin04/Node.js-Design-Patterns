@@ -20,7 +20,7 @@ class FindRegex extends EventEmitter { //event emitter 상속받아 , on / emit 
 
     find(){
         for(const file of this.files){
-            readFile(file , 'utf-8' , function(err , data){
+            readFile(file , 'utf-8' ,(err , data) => {        //
                 console.log('function에서 this' , this)
                 if(err) {
                     return this.emit('error' , err); 
