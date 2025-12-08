@@ -1,4 +1,4 @@
-import { spider } from './spider1.mjs'
+import { spider } from './spider1_better.mjs'
 spider(process.argv[2], (err, filename, downloaded) => {
   if (err) {
     console.error(err)
