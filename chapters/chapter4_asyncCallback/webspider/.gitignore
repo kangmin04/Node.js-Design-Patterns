@@ -2,7 +2,7 @@
 node_modules/
 
 # Downloaded files
-www.*.html
+*.html
 
 # Log files
 *.log

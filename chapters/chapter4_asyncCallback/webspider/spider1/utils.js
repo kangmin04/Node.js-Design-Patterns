@@ -2,6 +2,7 @@ import { constants, access } from 'node:fs'
 import { extname, join } from 'node:path'
 import { mkdirp } from 'mkdirp'
 import slug from 'slug'
+import { Parser } from 'htmlparser2'
 
 export function exists(filePath, cb) {
   access(filePath, constants.F_OK, err => {
@@ -69,3 +70,4 @@ export function recursiveMkdir(path, cb) {
     .then(() => cb(null))
     .catch(e => cb(e))
 }
+
