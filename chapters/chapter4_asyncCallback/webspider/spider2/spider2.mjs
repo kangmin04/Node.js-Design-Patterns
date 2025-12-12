@@ -85,7 +85,7 @@ export function spider(url, maxDepth, cb) {
           return cb(err)
         }
         iterate(index + 1) //spider(link[index])가 종료 된 후에 !! 다음 내용 실행 -> 순서 보장
-        
+
       })
     }
     iterate(0) // 5
