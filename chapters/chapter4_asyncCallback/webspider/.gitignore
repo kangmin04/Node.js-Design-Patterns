@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Downloaded files
+*.html
+
+# Log files
+*.log
