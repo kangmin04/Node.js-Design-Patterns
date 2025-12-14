@@ -1,4 +1,5 @@
-import { spider } from './spider3.mjs'
+// import { spider } from './spider3.mjs'
+import { spider } from './spider3NoRace.mjs'
 
 const url = process.argv[2]
 const maxDepth = Number.parseInt(process.argv[3], 10) || 1
