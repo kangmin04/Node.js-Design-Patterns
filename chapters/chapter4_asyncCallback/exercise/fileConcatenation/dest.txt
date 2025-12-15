@@ -1,0 +1,4 @@
+just simple example for text1.txt file
+
+more sentence
+TEXT2 입니다. TEXT3

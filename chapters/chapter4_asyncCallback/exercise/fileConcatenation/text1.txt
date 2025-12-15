@@ -1,0 +1,3 @@
+just simple example for text1.txt file
+
+more sentence
