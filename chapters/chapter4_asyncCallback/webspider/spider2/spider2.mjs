@@ -22,7 +22,7 @@ export function spider(url, maxDepth, cb) {
         // If the page was already downloaded,  read the contents and download the links
         return readFile(filename, 'utf8', (err, fileContent) => {
           if (err) {
-            // error reading the file
+          
             return cb(err)
           }
           return spiderLinks(url, fileContent, maxDepth, cb)

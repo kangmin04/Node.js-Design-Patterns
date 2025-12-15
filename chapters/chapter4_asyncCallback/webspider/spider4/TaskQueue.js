@@ -9,8 +9,8 @@ export class TaskQueue extends EventEmitter {
   }
 
   pushTask(task) {
-    this.queue.push(task)
-    process.nextTick(this.next.bind(this))
+    this.queue.push(task) //done => {}을 this.queue 맨뒤에 저장. 
+    process.nextTick(this.next.bind(this))//현재 실행 중 코드 끝나면 next 시행. 
     return this
   }
 
@@ -20,8 +20,8 @@ export class TaskQueue extends EventEmitter {
     }
 
     while (this.running < this.concurrency && this.queue.length > 0) {
-      const task = this.queue.shift()
-      task(err => {
+      const task = this.queue.shift()  //이 task가 done => {spiderTask}
+      task(err => { //task 실행. 그리고 이떄 전달해주는 인자인 err => {} 이 done으로 !!!
         if (err) {
           this.emit('error', err)
         }
@@ -29,7 +29,8 @@ export class TaskQueue extends EventEmitter {
         process.nextTick(this.next.bind(this))
       })
       this.running++
-    }
+    } // task 인 spiderTask() 가 시행 되면서 위의 done 함수인 ( err = >{}) 을 spiderTask 인자에 포함해 전달한다. 
+    
   }
 
   stats() {

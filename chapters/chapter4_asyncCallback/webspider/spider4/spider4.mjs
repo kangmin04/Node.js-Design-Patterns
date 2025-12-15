@@ -43,7 +43,8 @@ function spiderLinks(currentUrl, body, maxDepth, queue) {
   }
 
   for (const link of links) {
-    spider(link, maxDepth - 1, queue)
+    spider(link, maxDepth - 1, queue) //각 link들에 지체없이 바로 spider 호출 -> queue.pushTask 바로 실행
+    //해당 링크를 크롤링하는 새로운 spiderTask를 태스크 큐에 추가 
   }
 }
 
@@ -52,7 +53,6 @@ function spiderTask(url, maxDepth, queue, cb) {
 
   exists(filename, (err, alreadyExists) => {
     if (err) {
-      // error checking the file
       return cb(err)
     }
 
@@ -80,7 +80,16 @@ function spiderTask(url, maxDepth, queue, cb) {
       // if the file is an HTML file, spider it
       if (filename.endsWith('.html')) {
         spiderLinks(url, fileContent.toString('utf8'), maxDepth, queue)
-        return cb()
+        return cb() //다운로드나 비동기 작업 끝났을 떄 done() 호출 ! 
+        // done()은 TaskQueue에서 정의한 
+        // : (err => { 
+        //   if (err) {
+        //     this.emit('error', err)
+        //   }
+        //   this.running--   -> 실행 중 작업이 종료된 것이므로 카운트 1 줄임.
+        //   process.nextTick(this.next.bind(this))   => 작업이 하나 끝났으니 , 혹시 큐에 작업 있는지 체크해라. 
+        // })
+        // this.running++
       }
       // otherwise, stop here
       return cb()
