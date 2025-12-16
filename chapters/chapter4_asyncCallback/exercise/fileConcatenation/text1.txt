@@ -1,3 +1,3 @@
-just simple example for text1.txt file
+text1 . 
 
-more sentence
+수정 버젼임. writeFile을 항상 비동기적으로 호출하도록함, 

@@ -13,10 +13,17 @@ function concatFiles(...args){
     function iterator(index){
         if(index === srcs.length ){
             writeFile(dest , fileData , (err) => {
-                if(err) return console.log(err); 
-                console.log('dest made! '); 
+                if(err){
+                    return cb(err); 
+                } 
+                cb(); 
+              
             })
-            return cb(); 
+            //기존엔 writeFile 비동기 작업 넣어두고 바로 return cb()로 종료 여부와 상관없이 종료 내용출력함 . 
+            //내용 출력은 비동기 안으로 넣어두고 종료만 밖에서 , 
+            return; 
+           
+            
         }
         readFile(srcs[index] , (err , data) => {
             if(err) {            
