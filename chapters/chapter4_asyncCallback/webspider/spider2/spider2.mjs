@@ -16,13 +16,10 @@ export function spider(url, maxDepth, cb) {
       }
       if (alreadyExists) {
         if (!filename.endsWith('.html')) {
-          // ignoring non-HTML resources
           return cb()
         }
-        // If the page was already downloaded,  read the contents and download the links
         return readFile(filename, 'utf8', (err, fileContent) => {
           if (err) {
-          
             return cb(err)
           }
           return spiderLinks(url, fileContent, maxDepth, cb)
