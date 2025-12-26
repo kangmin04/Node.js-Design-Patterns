@@ -11,7 +11,7 @@ export class TaskQueue extends EventEmitter {
   pushTask(task) {
     this.queue.push(task) //done => {}을 this.queue 맨뒤에 저장. 
     process.nextTick(this.next.bind(this))//현재 실행 중 코드 끝나면 next 시행. 
-    return this
+    // return this
   }
 
   next() {
