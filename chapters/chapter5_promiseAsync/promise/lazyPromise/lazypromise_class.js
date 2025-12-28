@@ -53,7 +53,9 @@ export class LazyPromise extends Promise { // 1
   //   console.log(lazyPromise)
   // })
 
-  const normalPromise = new Promise((resolve, reject) => {
+  //normal one execute executor directly . 
+
+  const normalPromise = new Promise((resolve, reject) => {  
     console.log('Executor Started!')
       // simulate some async work to be done
       setTimeout(() => {
@@ -62,3 +64,6 @@ export class LazyPromise extends Promise { // 1
   })
     console.log('Promise instance created!')
   console.log(normalPromise)
+
+
+  normalPromise.then()
