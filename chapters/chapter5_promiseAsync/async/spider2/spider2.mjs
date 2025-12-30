@@ -42,7 +42,7 @@ export async function spider(url, maxDepth) {
   if(!filename.endsWith('.html')){
     return 
   }
-  if(!content){
+  if(!content){ //download 중복 제거. 
     content = await readFile(filename,'utf8')
   }
   await spiderLinks(url,content.toString('utf8'),maxDepth)
