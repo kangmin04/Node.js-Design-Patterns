@@ -22,7 +22,7 @@ function promisify(callbackBasedFn) {
 
 // 1. randomBytes 함수를 프로미스 버전으로 변환합니다.
 const randomBytesP = promisify(randomBytes); //callbackBasedFn
-
+console.log(randomBytesP); 
 // 2. 이제 콜백 대신 .then()을 사용하여 결과를 처리할 수 있습니다.
 randomBytesP(32)
   .then(buffer => {

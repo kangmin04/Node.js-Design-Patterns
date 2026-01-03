@@ -14,10 +14,23 @@
 // })
 
 
-let promise = Promise.resolve(); 
+// let promise = Promise.resolve(); 
 
-promise=promise.then(() => {
-    console.log('promise');
-})
+// promise=promise.then(() => {
+//     console.log('promise');
+// })
 
-pr
+// pr
+
+
+function promisify(arg){
+    return function A(){
+        return new Promise((resolve, reject) => {
+      resolve(arg)
+        })
+    }
+}
+
+const random = promisify('test');
+random.then((res) => console.log(res))
+
