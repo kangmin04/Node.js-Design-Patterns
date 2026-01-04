@@ -6,7 +6,9 @@ const mountains = [
   { name: 'Lhotse', height: 8516 },
   { name: 'Makalu', height: 8481 }
 ]
+
 const mountainsStream = Readable.from(mountains)
+
 //Readable.from() 은 사실 다음 코드의 간소화다. 
 
 // let index = 0;
@@ -21,6 +23,8 @@ const mountainsStream = Readable.from(mountains)
 //     }
 //   }
 // });
+
+
 mountainsStream.on('data', (mountain) => {
   console.log(`${mountain.name.padStart(14)}\t${mountain.height}m`)
 })
