@@ -5,7 +5,6 @@ const chance = new Chance();
 export class RandomStream extends Readable {
     constructor(options){
         super(options); 
-        
         this.emittedBytes = 0 ; 
     }
 

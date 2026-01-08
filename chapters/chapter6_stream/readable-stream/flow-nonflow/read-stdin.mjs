@@ -1,3 +1,4 @@
+//NON-FLOW
 process.stdin
   .on('readable', () => {
     let chunk
