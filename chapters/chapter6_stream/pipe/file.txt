@@ -1,0 +1,59 @@
+
+echo Hello World! | sed s/World/Node.js/g 에 대해서 알려줘. 특히 sed 명령어. 그리고 unix/linus 다른 명령어는 어떤게 있어? cd ls pwd mv등 쉬운거말고
+
+Gemini
+안녕하세요! sed 명령어와 다른 유용한 Unix/Linux 명령어에 대해 알려드릴게요.
+
+이 명령어는 두 부분으로 나눌 수 있습니다. echo Hello World! 와 sed s/World/Node.js/g 입니다. 중간의 | (파이프)는 첫 번째 명령어의 결과를 두 번째 명령어의 입력으로 전달하는 역할을 합니다.
+
+echo Hello World!:
+
+echo 명령어는 뒤에 오는 문자열 "Hello World!"를 터미널에 출력합니다.
+| (파이프):
+
+echo가 출력한 "Hello World!"라는 텍스트를 sed 명령어의 입력으로 넘겨줍니다.
+sed s/World/Node.js/g:
+
+sed는 "Stream Editor"의 약자로, 텍스트 스트림(텍스트의 흐름)을 편집하는 데 사용되는 강력한 도구입니다. 주로 텍스트를 치환하거나 삭제하는 데 많이 쓰입니다.
+s: "substitute" (치환) 명령을 의미합니다.
+/World/: 찾을 패턴(문자열)입니다. 여기서는 "World"를 찾습니다.
+/Node.js/: 바꿀 문자열입니다. "World"를 "Node.js"로 바꿉니다.
+g: "global"의 약자로, 라인 전체에서 일치하는 모든 패턴을 바꾸라는 의미입니다. 만약 g가 없으면 첫 번째로 일치하는 "World"만 "Node.js"로 바꿉니다.
+결론적으로, 이 명령어는 "Hello World!"를 출력하고, 그 텍스트를 sed로 넘겨 "World"를 "Node.js"로 바꾼 후, 최종 결과인 "Hello Node.js"를 터미널에 출력합니다.
+
+cd, ls, pwd, mv 외에 알아두면 매우 유용한 명령어들입니다.
+
+grep: 파일이나 텍스트 스트림에서 특정 패턴을 검색합니다.
+예시: grep "error" server.log (server.log 파일에서 "error"라는 단어가 포함된 모든 라인을 찾습니다.)
+find: 특정 조건에 맞는 파일을 찾습니다.
+예시: find . -name "*.js" (현재 디렉토리와 하위 디렉토리에서 확장자가 .js인 모든 파일을 찾습니다.)
+awk: 텍스트를 특정 필드(컬럼)로 나누어 처리하는 데 강력한 스크립트 언어입니다.
+예시: ls -l | awk '{print $9}' (파일 목록에서 9번째 컬럼인 파일 이름만 출력합니다.)
+sort: 텍스트 파일의 라인을 정렬합니다.
+예시: cat users.txt | sort (users.txt 파일의 내용을 알파벳 순으로 정렬합니다.)
+uniq: 중복된 라인을 제거하거나, 중복 횟수를 보여줍니다. sort와 함께 자주 사용됩니다.
+예시: sort access.log | uniq -c (로그 파일에서 중복된 라인을 세어서 보여줍니다.)
+head / tail: 파일의 앞부분 또는 뒷부분 몇 라인을 보여줍니다. 로그 파일을 실시간으로 확인할 때 유용합니다.
+예시: tail -f app.log (app.log 파일에 추가되는 내용을 실시간으로 계속 보여줍니다.)
+ps: 현재 실행 중인 프로세스 목록을 보여줍니다.
+예시: ps aux | grep "node" (실행 중인 모든 프로세스 중에서 "node"라는 이름이 포함된 프로세스를 찾습니다.)
+kill: 특정 프로세스에 신호를 보내 종료시킵니다.
+예시: kill -9 12345 (프로세스 ID가 12345인 프로세스를 강제 종료합니다.)
+top / htop: 시스템의 현재 상태와 프로세스 정보를 실시간으로 보여줍니다. (htop은 top보다 더 시각적으로 보기 편하며, 별도 설치가 필요할 수 있습니다.)
+curl: URL을 통해 데이터를 전송하거나 받아오는 데 사용됩니다. API 테스트에 매우 유용합니다.
+예시: curl -X POST -H "Content-Type: application/json" -d '{"name":"test"}' http://api.example.com/users (JSON 데이터를 포함한 POST 요청을 보냅니다.)
+wget: 웹상의 파일을 다운로드합니다.
+예시: wget https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz (Node.js 설치 파일을 다운로드합니다.)
+chmod: 파일이나 디렉토리의 권한을 변경합니다.
+예시: chmod +x script.sh (script.sh 파일에 실행 권한을 추가합니다.)
+chown: 파일이나 디렉토리의 소유자를 변경합니다.
+예시: sudo chown node:node /var/www/myapp (디렉토리의 소유자를 'node' 사용자와 'node' 그룹으로 변경합니다.)
+이 명령어들을 잘 활용하면 개발 및 서버 관리 작업의 효율을 크게 높일 수 있습니다.
+
+
+
+
+Ask Gemini or type /
+
+
+
