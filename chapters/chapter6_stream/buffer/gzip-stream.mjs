@@ -4,5 +4,5 @@ const filename = process.argv[2];
 
 createReadStream(filename)
     .pipe(createGzip())
-    .pipe(createWriteStream(`${filename}2.gz`))
+    .pipe(createWriteStream(`${filename}-short.gz`))
     .on('finish' , () => {console.log('file done')})
