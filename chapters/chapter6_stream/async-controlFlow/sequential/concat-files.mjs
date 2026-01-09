@@ -12,7 +12,7 @@ export function concatFiles(dest , files){
                     transform(filename , _enc , done){
                         createReadStream(filename , {end : false}) //readable stream 종료 시 .end() 자동으로 호출됨 -> destStrean 이 close됨
                             .pipe(destStream)
-                            .on('error' , done)
+                            .on('error' , done) //이렇게만해도 에러 객체하나를 콜백의 인자로 전달
                             .on('finish' , done)
                     }
                 })
