@@ -1,5 +1,5 @@
 import {Transform} from 'node:stream'
-export class ConcurrentStream extends Transform{
+export class LimitConcurrentStream extends Transform{
     constructor( concurrency,userTransform , opts){
         super({objectMode : true , ...opts})
         this.userTransform = userTransform;

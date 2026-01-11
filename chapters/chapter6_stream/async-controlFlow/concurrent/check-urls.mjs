@@ -22,7 +22,7 @@ const checkUrls = new ConcurrentStream( async (url , _enc , push , done) => {
     }catch(err){
         push(`${url} is down\n`)
     }
-    done()
+    done() //_onCompleteCb()
 
     }
 )

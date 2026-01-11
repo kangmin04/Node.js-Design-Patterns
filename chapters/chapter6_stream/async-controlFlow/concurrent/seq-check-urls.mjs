@@ -1,3 +1,5 @@
+//sequential way of check-urls
+
 import { createInterface } from 'node:readline'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'

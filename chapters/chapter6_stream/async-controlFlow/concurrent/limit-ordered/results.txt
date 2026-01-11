@@ -1,0 +1,5 @@
+http://thiswillbedownforsure.com is down: TypeError: fetch failed
+http://google.com is up
+https://loige.co is up
+http://naver.com is up
+https://mario.fyi is up

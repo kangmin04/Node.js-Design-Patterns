@@ -12,8 +12,7 @@ export class ConcurrentStream extends Transform{
         this.userTransform(chunk ,
             enc , 
             this.push.bind(this) , 
-            this._onComplete.bind(this) //각 비동기 작업 끝날때마다 호출! 
-            
+            this._onComplete.bind(this) //각 비동기 작업 끝날때마다 호출!             
         )
         done()
     }

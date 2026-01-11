@@ -1,13 +1,13 @@
 import { createInterface } from 'node:readline'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
-import { ConcurrentStream } from './limit-concurrent-stream.mjs'
+import { LimitConcurrentStream} from './limit-concurrent-stream.mjs'
 const inputFile = createReadStream(process.argv[2]) // 1
 const fileLines = createInterface({ // 2
   input: inputFile,
 })
 
-const checkUrls = new ConcurrentStream( 2,async (url , _enc , push , done) => {
+const checkUrls = new LimitConcurrentStream( 2 ,async (url , _enc , push , done) => {
     if(!url){
         return done()
     }
