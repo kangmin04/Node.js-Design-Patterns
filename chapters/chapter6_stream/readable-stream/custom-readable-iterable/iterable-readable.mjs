@@ -24,6 +24,7 @@ const mountainsStream = Readable.from(mountains)
 //   }
 // });
 
+//# readable.from 인자로 오는건  Symbol.asyncIterator or Symbol.iterator 
 
 mountainsStream.on('data', (mountain) => {
   console.log(`${mountain.name.padStart(14)}\t${mountain.height}m`)
