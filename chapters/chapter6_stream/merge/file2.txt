@@ -1,0 +1,12 @@
+2자식 프로세스 (child_process 모듈):
+
+2child_process.spawn()으로 생성된 자식 프로세스의 표준 입출력(stdin, stdout, stderr)은 모두 스트림입니다.
+2child_process2예시: ffmpeg 같은 외부 프로그램을 실행할 때, ffmpeg의 stdout 스트림을 HTTP response 스트림으로 파이핑하여 실시간 비디오 변환 및 스트리밍 서버를 만들 수 있습니다.
+2암호화 (crypto 모듈):
+
+2child_processcrypto.createCipheriv() (암호화)나 crypto.createDecipheriv() (복호화)는 Transform 스트림을 반환합니다.
+2파일을 읽는 스트림을 암호화 스트림에 파이핑하고, 그 결과를 다시 파일 쓰기 스트림이나 네트워크 소켓으로 파이핑하여 데이터를 효율적으로 암호화/복호화할 수 있습니다.
+압축 (zlib 모듈):
+
+zlib.createGzip() (압축)이나 zlib.createGunzip() (압축 해제) 역시 Transform 스트림을 반환합니다.
+HTTP 응답을 보내기 전에 gzip 스트림으로 파이핑하여 전송 데이터의 크기를 줄이는 것이 일반적인 용례입니다.

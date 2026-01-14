@@ -1,0 +1,34 @@
+2자식 프로세스 (child_process 모듈):
+
+2child_process.spawn()으로 생성된 자식 프로세스의 표준 입출력(stdin, stdout, stderr)은 모두 스트림입니다.
+3결론부터 말하면, Node.js의 TCP 소켓 객체는 그 자체가 읽고 쓸 수 있는 스트림(Duplex Stream)입니다. 이것이 바로 Node.js 네트워크 프로그래밍을 강력하고 우아하게 만들어주는 핵심입니다.
+
+1네, 아주 좋은 질문입니다. 스트림은 Node.js의 성능과 철학의 핵심을 이루는 매우 중요한 개념입니다. 다양한 분야에서 활용되며, 특히 대용량 데이터나 실시간 통신을 효율적으로 처리하는 데 빛을 발합니다.
+
+3소켓이 스트림이기 때문에, 우리는 다른 모든 종류의 스트림과 pipe()로 연결할 수 있습니다.
+
+2child_process2예시: ffmpeg 같은 외부 프로그램을 실행할 때, ffmpeg의 stdout 스트림을 HTTP response 스트림으로 파이핑하여 실시간 비디오 변환 및 스트리밍 서버를 만들 수 있습니다.
+3socket.write(data): 소켓에 데이터를 쓰는 역할 (Writable 측면)
+2암호화 (crypto 모듈):
+
+1스트림은 "한 번에 모든 것을 메모리에 올리지 않고, 작은 조각(chunk) 단위로 데이터를 처리하는" 통로입니다. 이 개념 덕분에 아래와 같이 다양한 곳에서 사용됩니다.
+
+1파일 시스템 (fs 모듈):
+
+socket.on('data', chunk => {}): 소켓으로부터 데이터를 읽는 역할 (Readable 측면)
+2child_processcrypto.createCipheriv() (암호화)나 crypto.createDecipheriv() (복호화)는 Transform 스트림을 반환합니다.
+1가장 대표적인 사용 사례입니다. fs.createReadStream()으로 파일을 읽고 fs.createWriteStream()으로 파일을 씁니다.
+아래는 클라이언트가 접속하면 서버에 있는 file.txt 파일을 클라이언트에게 전송하는 간단한 TCP 서버입니다. 스트림이 어떻게 활용되는지 명확하게 보여줍니다.
+
+2파일을 읽는 스트림을 암호화 스트림에 파이핑하고, 그 결과를 다시 파일 쓰기 스트림이나 네트워크 소켓으로 파이핑하여 데이터를 효율적으로 암호화/복호화할 수 있습니다.
+압축 (zlib 모듈):
+
+1효과: GB 단위의 거대한 동영상 파일이라도 전체를 메모리에 로드할 필요 없이, 작은 조각으로 읽어와서 바로 압축하거나 클라이언트에 전송하는 등의 작업을 할 수 있습니다. 메모리 사용량이 매우 낮게 유지됩니다.
+zlib.createGzip() (압축)이나 zlib.createGunzip() (압축 해제) 역시 Transform 스트림을 반환합니다.
+1HTTP 요청 및 응답:
+
+HTTP 응답을 보내기 전에 gzip 스트림으로 파이핑하여 전송 데이터의 크기를 줄이는 것이 일반적인 용례입니다.
+서버: http.createServer()에서 받는 request 객체는 Readable 스트림입니다. 클라이언트가 업로드하는 대용량 파일을 받을 때 유용합니다. response 객체는 Writable 스트림으로, 대용량 데이터를 클라이언트에 보낼 때 사용됩니다. fs.createReadStream('movie.mp4').pipe(response) 한 줄이면 파일을 클라이언트로 스트리밍할 수 있습니다.
+클라이언트: http.request()로 요청을 보낸 후 받는 응답(response) 객체는 Readable 스트림입니다. 대용량 파일을 다운로드하면서 동시에 처리할 수 있습니다.
+TCP 소켓 통신 (net 모듈):
+
