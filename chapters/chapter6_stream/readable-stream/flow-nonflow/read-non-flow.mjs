@@ -1,4 +1,7 @@
 //NON-FLOW
+//you have to manually pull data by calling stream.read(size)
+//you can control when to read , and how many bytes
+
 process.stdin
   .on('readable', () => {
     let chunk
