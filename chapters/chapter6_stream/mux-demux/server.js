@@ -30,7 +30,9 @@ function demultiplexChannel(source, destinations) {
       })
     }
 
-const server = createServer(socket => {
+const server = createServer(socket => {  //TCP 서버 생성.
+  //클라이언트가 서버와 연결시 (connect)  새로운  socket 객체 생성 후 콜백함수 실행. 
+  //socket 통해서 데이터 수신 송신 가능
     const stdoutStream = createWriteStream('stdout.txt')
     const stderrStream = createWriteStream('stderr.txt')
 

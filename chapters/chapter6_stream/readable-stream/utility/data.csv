@@ -1,0 +1,7 @@
+type,country,profit
+order,italy,100
+order,spain,50
+order,italy,200
+order,france,75
+order,italy,150
+order,germany,120
