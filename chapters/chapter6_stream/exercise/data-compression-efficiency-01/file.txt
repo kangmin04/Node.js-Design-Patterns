@@ -1,0 +1,32 @@
+import { createReadStream, createWriteStream } from 'node:fs';
+import { createGzip } from 'node:zlib';
+import { pipeline } from 'node:stream';
+
+const inputFile = 'my_file.txt';
+const outputFile = 'my_file.txt.gz';
+const timerLabel = 'gzip-compression';
+
+// 1. Start the timer
+console.time(timerLabel);
+
+const source = createReadStream(inputFile);
+const gzip = createGzip();
+const destination = createWriteStream(outputFile);
+
+pipeline(source, gzip, destination, (err) => {
+  if (err) {
+    console.error('An error occurred:', err);
+    process.exit(1);
+  }
+  
+  // 2. Stop the timer when the pipeline is finished
+  console.timeEnd(timerLabel);
+  console.log('Compression finished.');
+});
+
+
+You can adapt this pattern for each of the compression algorithms (Brotli, Gzip, Deflate) you need to test. Good luck with the exercise
+
+
+
+
