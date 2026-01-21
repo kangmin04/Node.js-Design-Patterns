@@ -3,12 +3,14 @@
 //you can control when to read , and how many bytes
 
 process.stdin
+  .setEncoding('utf8')  
   .on('readable', () => {
     let chunk
     console.log('New data available')
     while ((chunk = process.stdin.read()) !== null) {
+   
       console.log(
-        `Chunk read (${chunk.length} bytes): "${chunk.toString()}"`
+        `Chunk read (${chunk.length} bytes): "${chunk}"`
       )
     }
   })
