@@ -1,45 +1,45 @@
 import { createConnection } from "node:net";
 import { createReadStream } from "node:fs";
-const inputFiles = process.argv.slice(2)
 
-const client = createConnection({port : 8080} , 
-    () => {console.log('client: server/client connectec')}
-)
+const inputFiles = process.argv.slice(2);
 
+const client = createConnection({ port: 8080 }, () => {
+  console.log('client: server/client connected');
+  sendFileToServer(inputFiles, client);
+});
 
-client.on('end' , () => {
-    console.log('client: client end' )
-    client.end(); 
-})
+client.on('end', () => {
+  console.log('client: client end');
+});
 
+client.on('data', (data) => {
+  console.log('client: data received', data.toString());
+});
 
-client.on('data' , (data) => {
-    console.log('client: data received' , data.toString() )
-})
+function sendFileToServer(inputFiles, destination) {
+  for (let i = 0; i < inputFiles.length; i++) {
+    const newStream = createReadStream(inputFiles[i]);
 
-function sendFileToServer(inputFiles , destination){
-    for(let i=0 ; i < inputFiles.length ; i++){
-        let newStream= createReadStream(inputFiles[i])
-         newStream// 1. 해당 파일 내용을 readable한 스트림으로 . 
-            .on('readable' , () => {
-                let chunk ; 
-                while((chunk = newStream.read()) !== null){
-                    let markedBuffer = Buffer.alloc(1+8); 
-                    markedBuffer.writeUint8(i,0); 
-                    markedBuffer.writeInt32BE(chunk.length,1); 
-                    chunk.copy(markedBuffer , 5)   
-                    destination.write(markedBuffer);
-                    console.log('write packet to header(' , i , ')')
-                }
-            })
-            .on('end' , () => {
-                console.log('end이벤트 발생함'); 
-                if(i === inputFiles.length -1){
-                    destination.end(); 
-                }
-            })
-         
-    }
+    newStream
+      .on('readable', () => {
+        let chunk;
+        while ((chunk = newStream.read()) !== null) {
+          const packet = Buffer.alloc(1 + 4 + chunk.length); //그전엔 1+8로 예전에 test하던걸 그대로 적용함.. 제대로 다시 보자
+          packet.writeUInt8(i, 0); // Channel ID (1 byte)
+          packet.writeUInt32BE(chunk.length, 1); // Length of the chunk (4 bytes)
+          chunk.copy(packet, 5); // Copy the chunk data after the 5-byte header
+          
+          destination.write(packet); 
+          console.log(`Wrote packet to channel (${i}) with length ${chunk.length}`);
+        }
+      })
+      .on('end', () => {
+        console.log(`Finished reading file: ${inputFiles[i]}`);
+        // If this is the last file, end the connection
+        if (i === inputFiles.length - 1) {
+          console.log('All files sent. Closing connection.');
+          destination.end();
+        }
+      });
+  }
 }
-
-sendFileToServer(inputFiles , client)
