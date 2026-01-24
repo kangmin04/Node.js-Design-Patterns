@@ -62,3 +62,21 @@ export class ImageGif extends Image {
   const image3 = createImage('photo.png')
   
   console.log(image1, image2, image3)
+
+
+
+
+
+
+
+
+//대부분 이렇게 함. 이러면 image는 only Image의 객체..... if diverse images by format -> have to do again
+
+  // const image = new Image();
+
+  // function createImageA(patj){
+  //   if(patj === 'dssd')
+  //   return new Imagedsds()
+  // }
+
+  // let img = createImageA('path~ ')
