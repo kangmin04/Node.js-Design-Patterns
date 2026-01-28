@@ -16,6 +16,9 @@ export class ImmutableBuffer {
       }
     }
     executor(modifiers) // 6 생성자 마지막 함수가 호출. 
-    
+    /*
+        executor은 ({write => {write(hello)}})로 구성됨. 
+        
+    */
   }
 }
