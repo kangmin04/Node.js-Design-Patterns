@@ -1,0 +1,24 @@
+import { db } from "./db.mjs";
+export class Blog {
+    initialize(){
+        const initQuery = `CREATE TABLE IF NOT EXISTS posts(
+        id TEXT PRIMARY KEY , 
+        title TEXT NOT NULL , 
+        content TEXT , 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTANP
+        );` 
+
+        return db.run(initQuery)
+    }
+
+    createPost(id , title , content , createdAt){
+        return db.run(
+            `INSERT INRO posts VALUES (? , ?, ?, ?)` , 
+            id , title , content , createdAt
+        )
+    }
+
+    getAllposts(){
+        return db.all(`SELECT * FROM posts ORDER BY DESC`)
+    }
+}
