@@ -19,7 +19,9 @@
     "express": "^4.21.2",
     "mkdirp": "^3.0.1",
     "openssl": "^2.0.0",
-    "parallel-transform": "^1.2.0"
+    "parallel-transform": "^1.2.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

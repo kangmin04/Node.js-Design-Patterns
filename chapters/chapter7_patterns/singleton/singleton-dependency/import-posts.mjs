@@ -1,4 +1,4 @@
-import { Blog } from './blog.js'
+import { Blog } from './blog.mjs'
 
 const posts = [
   {

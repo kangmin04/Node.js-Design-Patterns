@@ -5,7 +5,7 @@ export class Blog {
         id TEXT PRIMARY KEY , 
         title TEXT NOT NULL , 
         content TEXT , 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTANP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );` 
 
         return db.run(initQuery)
@@ -13,12 +13,12 @@ export class Blog {
 
     createPost(id , title , content , createdAt){
         return db.run(
-            `INSERT INRO posts VALUES (? , ?, ?, ?)` , 
+            `INSERT INTO posts VALUES (? , ?, ?, ?)` , 
             id , title , content , createdAt
         )
     }
 
     getAllposts(){
-        return db.all(`SELECT * FROM posts ORDER BY DESC`)
+        return db.all(`SELECT * FROM posts ORDER BY created_at DESC`)
     }
 }
