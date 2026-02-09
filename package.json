@@ -17,6 +17,7 @@
     "csv-parse": "^6.1.0",
     "ejs": "^3.1.9",
     "express": "^4.21.2",
+    "level": "^10.0.0",
     "mkdirp": "^3.0.1",
     "openssl": "^2.0.0",
     "parallel-transform": "^1.2.0",
