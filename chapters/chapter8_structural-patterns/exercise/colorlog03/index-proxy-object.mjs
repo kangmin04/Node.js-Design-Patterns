@@ -14,7 +14,7 @@ const proxyLog = new Proxy(console , {
             }
         }
         //defined method
-        return target[property]
+        return target[property].bind(console)
  
     }}
 )
