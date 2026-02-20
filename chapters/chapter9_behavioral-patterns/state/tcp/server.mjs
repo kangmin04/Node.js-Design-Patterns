@@ -1,5 +1,9 @@
-/* STUDY ABOUT LENGTH PREFIX ENCODING + 네트워크 인코딩 시 다른 방법들  */
-
+/* STUDY ABOUT LENGTH PREFIX ENCODING + 네트워크 인코딩 시 다른 방법들  
+        json으로 transmit 시 continuous butes of stream 이기에 단어 구분이 안됨
+        4바이트로 subsequent data의 length
+      
+      */
+      
 import { createServer } from 'node:net'
 
 const server = createServer(socket => {
@@ -10,19 +14,21 @@ const server = createServer(socket => {
   let buffer = Buffer.alloc(0); 
   socket.on('data' , chunk => {
     buffer = Buffer.concat([buffer, chunk])
-  })
 
-  while(buffer.length >= 4){
-    const messageLength = buffer.readUInt32BE(0); 
-    if(buffer.length < 4 + messageLength){
-      break; 
-   // Check if we have the complete message
-   const message = buffer.subarray(4, 4 + messageLength).toString('utf8')
-   // Process the message (just log it)
-   console.log('Received message:', JSON.parse(message))
-   // Remove the processed message from the buffer
-   buffer = buffer.subarray(4 + messageLength)
- }
-  }})
-// Start the server and listen on port 4545
-server.listen(4545, () => console.log('Server started'))
+    while(buffer.length >= 4){
+        const messageLength = buffer.readUInt32BE(0); 
+        if(buffer.length < 4 + messageLength){
+          return; 
+        }
+    
+       const message = buffer.subarray(4, 4 + messageLength).toString('utf8')
+       console.log('message : ' , JSON.parse(message))
+       buffer = buffer.subarray(4 + messageLength);
+     }
+  })
+})
+
+
+server.listen(4545, () => {
+    console.log('Server listening on port 4545')
+})

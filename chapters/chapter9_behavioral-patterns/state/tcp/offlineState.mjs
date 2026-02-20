@@ -17,7 +17,8 @@ export class OfflineState {
         console.log(
             `Trying to connect (${this.failsafeSocket.queue.length} queued `+
               `messages)`
-          )
+        )
+        
         this.failsafeSocket.socket = createConnection(
             this.failsafeSocket.options , () => {
                 console.log('Connection established')

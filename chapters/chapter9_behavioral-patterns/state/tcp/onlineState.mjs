@@ -23,10 +23,12 @@ export class OnlineState {
         }
 
         if(!success){
+            console.log('Flushing failed -> going offline')
             this.failsafeSocket.changeState('offline')
         }
     }catch(err){
         console.error('Error during flush', err.message)
+        console.log('Flushing failed -> going offline')
         this.failsafeSocket.changeState('offline')
     }
 }

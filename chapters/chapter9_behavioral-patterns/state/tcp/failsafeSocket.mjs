@@ -13,7 +13,8 @@ export class FailsafeSocket {
             online : new OnlineState(this)
         }
 
-        this.changeState('offline')
+        this.changeState('offline') 
+        /* 처음에 offline active호출해서 this.failsafeSocket.socket에 tcp connection 연결 */
     }
 
     changeState(state){
