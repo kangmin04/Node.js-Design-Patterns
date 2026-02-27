@@ -4,9 +4,6 @@
     
     2. disconnected  - 
     inteface write method
-
-
-
 */
 
 import * as net from 'node:net'
