@@ -1,0 +1,84 @@
+DEFINITION
+
+1. System under test
+    - sut
+    - 테스트 될 대상
+    - 한 컴포넌트, 모듈, 전체 코드가 될수있음 
+
+2. Arrange, Act, Assert
+    - clear, maintain하게 테스트 가능하게함
+    - 모든 테스트는 다음 3단계에 따라서 작동됨
+    - arrange : sut를 우한 pre condition 설정 
+    - act : precondition 토대로 execute System
+    - assert : expected로 실행된건지 verify
+
+3. code coverage
+    - 테스트를 실행했을 때 실제 소스 코드의 몇 %가 실행되었는지를 나타내는 지표
+    - 측정 기준: 라인(Line), 분기(Branch - if/switch문), 구문(Statement), 클래스, 함수 커버리지 등
+    - 주의사항: **"높은 커버리지가 높은 품질을 보장하지는 않는다"**는 점을 명심
+    - 검증(Assertion) 없이 코드만 훑고 지나가는 테스트도 커버리지를 100%로 만들 수 있습니다. 이런 테스트는 아무런 가치가 없습니다.
+    - 커버리지 수치 자체를 목표로 삼기보다는, 의미 있는 테스트를 작성했을 때 따라오는 부수적인 지표로 활용
+
+
+4. Test doubles
+    - sut를 dependencies(db, api, service)로부터 isolate 시키기 위함
+    - 제한된 테스트 환경내에서 mimic real implementation (dependencies가 준비안된 상태거나 사용안될 떄에도 다른 코드를 테스트 위해서 사용)
+    4.1 - Stub
+            - context와 관계없이(어떤 input을 받던지) 항상 동일한 script내의 결과를 반환. 
+            - 기상 api stub이면 테스트를 위해 항상 sunny만 반환
+    4.2 - Spies
+            - stub처럼 반환하지만 , 추가로 observer 역할
+            - 메서드 얼마나 invoke됐는지, 어떤 argument받았는지, 호출 순서 등 기록함
+    4.3 - Mocks 
+            - Stub처럼 미리 정의된 응답을 제공하면서도, 동시에 기대되는 동작을 설정하고 이를 엄격하게 강제
+            - strict validator
+            - 어떤 인자 , call 횟수 등 전부 exactly defined되어있고 조금이라도 deviate되면 fail
+            - 보안 프로토콜이나 API 사양 준수 여부와 같은 핵심적인 상호작용이 계약(Contract)을 따르는지 확인하는 데 유용
+            - 
+
+5. TDD
+    - Test-driven development
+    - 구현 코드를 작성하기 전에, 먼저 테스트를 작성하여 코드가 무엇을 해야 하는지 정의 -> 실제 요구사항에 집중할 수 있고 불필요한 코드의 유입을 방지 가능
+    - RED-GREEN-REFACTOR
+        - Red (실패하는 테스트 작성): 구현하고자 하는 동작을 설명하는 테스트를 먼저 작성합니다. 아직 코드가 없으므로 테스트는 실패하며, 이를 "Red" 단계라고 합니다.
+
+        - Green (테스트 통과시키기): 테스트를 통과시킬 만큼의 최소한의 코드만 작성합니다. 이 단계의 목표는 완벽함이 아니라 기능 구현이며, 최대한 빨리 Red에서 Green으로 넘어가는 것이 핵심입니다.
+
+        - Refactor (코드 개선): 테스트가 통과되면 코드를 정리합니다. 테스트가 계속 통과되는지 확인하면서 구조를 개선하고 중복을 제거하여 유지보수하기 좋은 코드로 만듭니다.
+
+6. BDD
+    - Behavior-driven development
+    - 시스템의 동작을 기술적 지식이 있는 사람과 없는 사람 모두가 이해할 수 있는 방식으로 설명하고 검증하는 데 중점
+    - 핵심은 테스트를 개발자, 제품 팀, 비즈니스 이해관계자 사이의 가교로 활용하여 요구사항에 대한 공통된 이해를 구축하고 소통을 개선
+    - Gherkin 언어 사용 
+        - Feature : ~ 
+        - Scenerio : ~
+        - Given : ~ 
+        - When / And /Then
+    - QA 등과 clear communication 원할 떄
+
+
+7. CI
+    - 지속적 통합 (Continuous Integration, CI)
+    - 내가 작성한 코드가 다른 사람의 코드와 문제없이 잘 어우러지는지 '자주, 그리고 일찍' 확인
+    - 자동화된 빌드와 테스트
+
+8. CD
+    - 1. 지속적 제공 (Continuous Delivery)
+        - CI 파이프라인을 통과한 모든 변경 사항이 자동으로 빌드 및 테스트되어 스테이징(Staging) 또는 테스트 환경에 배포
+        - 실제 운영 환경(Production)으로 출시할지 말지는 사람(개발자, QA 엔지니어 또는 릴리스 매니저)이 직접 결정 -> 최종 출시는 사람이 결정 
+    - 2. 지속적 배포 (Continuous Deployment)
+        - 변경 사항이 모든 자동화 테스트를 통과하면 사람의 개입 없이 즉시 운영 환경으로 배포
+        - 운영 환경에 문제가 생기지 않도록 잡아낼 수 있는 회귀 테스트(Regression Test)를 포함한 강력한 자동화 테스트 세트가 필수 
+        - 모든 변경 사항이 즉시 배포되기 때문에 수동 승인, 출시 전략 회의, 긴 배포 주기와 같은 병목 현상이 사라짐
+
+
+
+9. Type of tests
+    9.1 unit tests: for isolating, validating individual component
+        - complete한 isolation에서 function, methods, classes 등 smallest testable units을 examine함
+        - db, UI, API 등 broader context는 무시. 각 function에만 집중 
+        - precision (validateCoupon()이 fail이면 coupon계산 로직 내에서 에러를 찾으면 됨 -> 디버깅 빨라짐)
+        - speed (external dependencies 없기에 각 unit test는 빠른 시간 내에 종료됨)
+        - unit 테스트는 잘 작동해도 다른 컴포넌트와 Integration시 에러 있을수도 있음 -> Unit 혼자 돌리진않음
+    9.2 Integration test

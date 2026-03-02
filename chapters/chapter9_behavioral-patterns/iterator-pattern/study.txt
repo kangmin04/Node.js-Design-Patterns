@@ -79,7 +79,7 @@ const mat = new Matrix();
 const iterator = mat[Symbol.iterator]()  이렇게 symbol.iterator 메서드를 가져와서 return next() 함수 가능
 
 
-
+-------------------------------------------
 
 
 /* Iterator prototype 상속 */
@@ -89,6 +89,39 @@ const iterator = mat[Symbol.iterator]()  이렇게 symbol.iterator 메서드를 
 - 이터러블 이터레이터: Iterator를 상속받으면 자동으로 [Symbol.iterator]가 구현되어 for...of나 전개 연산자(...)를 즉시 사용할 수 있습니다. -
 ( - Iterator prototype은 iterable protocol을 뒤에서 구현해줌 )
 
+
+-------------------------------------------
+
+Symbol 
+ - 새로운 primitive data type. (string , number 같은 거)
+ - 유일하고 불변하는 값을 만든다. 
+ - (ex) const sym1 = Symbol('id');
+        const sym2 = Symbol('id');
+
+        console.log(sym1 === sym2); // false
+
+Symbol.iterator 
+ - JS엔진이 특정 목적을 위해 미리 정의해둔 특별한 심볼
+ - 객체의 기본 이터레이터를 반환하는 메서드의 키 !  instance[Symbol.iterator]()로 호출
+ - []로 사용하는 이유 !! 
+  -> Computed Property Name , 즉 객체 속성 키로 리터럴이 아닌 변수나 표현식의 값(심볼의 값 그 자체)를 사용하고 싶을 떄 사용 
+  1. const myIterable = {
+  // 이것은 'Symbol.iterator' 라는 *문자열*을 키로 가집니다.
+  'Symbol.iterator': function() { 
+    // ...
+  }
+};
+
+2. const myIterable = {
+  // [Symbol.iterator]는 Symbol.iterator 심볼의 실제 값을 키로 사용합니다.
+  [Symbol.iterator]: function() {
+    return this; // 이터레이터 객체를 반환
+  }
+};
+
+
+
+-------------------------------------------
 
 
 
@@ -241,3 +274,6 @@ done이 true이면:
 
 스프레드 문법도 동일하게 작동함. 
 반환된 value를 배열에 계속 push 한단 개념. 
+
+
+

@@ -4,7 +4,7 @@ import { createDb } from './db.mjs'
 
 const db = await createDb( 
   join(import.meta.dirname, 'data.sqlite'))
-const blog = new Blog(db) 
+const blog = new Blog(db) //DI
 await blog.initialize()
 const posts = await blog.getAllPosts()
 if (posts.length === 0) {
