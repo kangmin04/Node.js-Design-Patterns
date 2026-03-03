@@ -170,4 +170,28 @@ DEFINITION
 
     - subset: 
         - tests를 hierarchical structure로 구성가능
-        - 
+        - large test files에 대해서 related test cases grouping이 가능함! 
+            -> improving readability and organization
+
+        - NODE version 24 미만이면 -> async await 해줘야함
+
+
+13. Watch Mode
+    - node --test --watch로 실행
+    - test suite는 한번만 run되고, process는 stay alive ->  monitoring test files + any imported module
+    - 저장되면 re-execute됨
+    - context switching없고, restart안해도 됨
+
++ 일반적인 node --test 실행 방식
+1. 테스트 명령을 내린다.
+2. 새로운 Node.js 프로세스를 띄운다.
+3. V8 엔진을 초기화하고, 필요한 모듈(라이브러리 등)을 메모리에 로드한다.
+4. 테스트를 실행하고 프로세스를 종료한다.
+5. 여기서 발생하는 오버헤드는 엄밀히 말하면 OS의 CPU 컨텍스트 스위칭보다는 **'프로세스 기동 비용(Process Startup Overhead)'**에 가깝습니다
+
+watch mode 시 context switching없고 효율적인 이유: 
+    Node.js가 테스트 실행 환경을 메모리에 일정 부분 유지하려고 시도하기 때문입니다.
+    일반 모드: 테스트를 한 번 실행할 때마다 프로세스를 완전히 새로 만듭니다. (Heavy함)
+    Watch 모드: * Node.js 프로세스를 죽이지 않고 살려둔 상태에서 코드 변경을 감지합니다.
+    변경이 일어나면 이미 로드된 환경(V8 인스턴스 등)을 재사용하거나, 최소한의 파일만 다시 읽어 실행합니다.
+    즉, **"프로세스 생성 -> 모듈 로드 -> 엔진 초기화"**라는 무거운 과정을 매번 반복하지 않으므로 전환(Switching) 비용이 획기적으로 줄어듭
