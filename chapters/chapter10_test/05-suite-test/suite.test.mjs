@@ -10,7 +10,7 @@ suite('Top level suite' , {concurrency: true} , () => {
     suite = describe, test= it (다른 언어, 프레임워크에서 주로 사용되는 방식)
 */
 
-describe('Top level suite' , {concurrency: true} , () => {
-    it('Subtest 1', () => {})
-    it('Subtest 2', () => {})
-})
+// describe('Top level suite' , {concurrency: true} , () => {
+//     it('Subtest 1', () => {})
+//     it('Subtest 2', () => {})
+// })

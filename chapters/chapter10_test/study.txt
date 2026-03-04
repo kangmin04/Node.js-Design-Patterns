@@ -195,3 +195,76 @@ watch mode 시 context switching없고 효율적인 이유:
     Watch 모드: * Node.js 프로세스를 죽이지 않고 살려둔 상태에서 코드 변경을 감지합니다.
     변경이 일어나면 이미 로드된 환경(V8 인스턴스 등)을 재사용하거나, 최소한의 파일만 다시 읽어 실행합니다.
     즉, **"프로세스 생성 -> 모듈 로드 -> 엔진 초기화"**라는 무거운 과정을 매번 반복하지 않으므로 전환(Switching) 비용이 획기적으로 줄어듭
+
+
+14. Executing subset of all tests
+    - default test(별도의 인자없이 node --test 시): 
+        1. .test.js (우리가 해오던 convention)
+        2. -test.js OR _test.js
+        3. /test directory내의 테스트 파일들
+        4. test-*.js 형식의 파일들 
+        전부 node --test 시 돌아감. ! 
+
+    - targeted test execution with custom glob
+        : node --test 05-suite-test/*.test.mjs 이렇게 작성 ! (책에선 ""로 감싸는데 내가 직접해보니 "없어야 작동함)
+        - 특정 feature만 돌려볼수있음
+        - custom convention 가능 (꼭 test.js 형식이 아니라 spec.js 하고 argument로 경로 명시해주면 됨)
+
+
+    - 테스트 컨텍스트 활용한 test 방법들
+        t.skip: 
+            t.skip()은 이미 작성되었지만, 특정 이유로 잠시 실행하고 싶지 않은 테스트를 건너뛸 때 사용합니다. 
+            예를 들어, 버그로 인해 실패하는 테스트나 아직 고쳐지지 않은 기능을 검사하는 테스트를 임시로 비활성화하는 데 유용
+
+        t.todo: 
+            t.todo()는 아직 작성되지 않았지만, 앞으로 작성해야 할 테스트를 표시할 때 사용
+            "나중에 이 테스트 만들어야지"라고 표시해두는, 말 그대로 '할 일(To-do)' 목록 같은 개념
+
+        t.only:
+            execlusive test용
+
+
+15. test reporter
+    - 1. node --test --test-reporter=spec  05-suite-test/suite.test.mjs : default 출력 방식
+        ▶ Top level suite
+        ✔ Subtest 1 (1.137409ms)
+        ✔ Subtest 2 (1.40217ms)
+        ✔ Top level suite (2.85488ms)
+        ℹ tests 2
+        ℹ suites 1
+        ℹ pass 2
+        ℹ fail 0
+        ℹ cancelled 0
+        ℹ skipped 0
+        ℹ todo 0
+        ℹ duration_ms 91.530788
+    - 2. node --test --test-reporter=tap  05-suite-test/suite.test.mjs : tap(test anyting protocol)임. human/machine 둘다 readable -> 다양한 CI, 서드파티와 integrated 가능
+        TAP version 13
+        # Subtest: Top level suite
+            # Subtest: Subtest 1
+            ok 1 - Subtest 1
+            ---
+            duration_ms: 1.18128
+            ...
+            # Subtest: Subtest 2
+            ok 2 - Subtest 2
+            ---
+            duration_ms: 1.49669
+            ...
+            1..2
+        ok 1 - Top level suite
+        ---
+        duration_ms: 2.76623
+        type: 'suite'
+        ...
+        1..1
+        # tests 2
+        # suites 1
+        # pass 2
+        # fail 0
+        # cancelled 0
+        # skipped 0
+        # todo 0
+        # duration_ms 91.978168
+    - 3.  node --test --test-reporter=dot  05-suite-test/suite.test.mjs : 테스트 결과 점으로 나타냄(성공시 녹색, 실패하면 X) 
+    ... 
