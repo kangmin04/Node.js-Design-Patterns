@@ -5,10 +5,12 @@
   channel = "stable-24.05"; # or "unstable"
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.nodejs_20
+    pkgs.nodejs #20-> 22 UPDATE
   ];
   # Sets environment variables in the workspace
-  env = {};
+  env = {
+    NPM_CONFIG_PREFIX = ""; # 여기서 변수를 초기화합니다.
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
