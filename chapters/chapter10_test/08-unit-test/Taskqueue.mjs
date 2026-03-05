@@ -36,3 +36,4 @@ export class TaskQueue extends EventEmitter{
       }
     }
   }
+
