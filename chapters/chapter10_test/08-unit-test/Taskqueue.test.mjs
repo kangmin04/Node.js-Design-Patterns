@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {once} from 'node:events'
 import {suite, test} from 'node:test'
-import { setImmediate } from 'node:timers/promises'
+import { scheduler, setImmediate } from 'node:timers/promises'
 import { TaskQueue } from './Taskqueue.mjs'
 /*
     유사한 test끼리 그룹화 + 병렬로 빠르게 + async 길어질 때  500ms로 제한
@@ -95,5 +95,20 @@ suite("TaskQueue" , {concurrency: true, timeout:500} , () => {
         assert.equal(errors[1] , 'Task failed 2')
 
       
+    })
+
+    test.todo('stats() returns correct counts' , async () => {
+        const queue = new TaskQueue(1);
+        const task = async() => {
+            await setImmediate(); 
+        } 
+
+        queue.pushTask(task).pushTask(task)
+        await setImmediate(); 
+        assert.deepEqual(queue.stats(), {running: 1, scheduled: 1})
+        await once(queue, 'empty')
+        assert.deepEqual(queue.stats(), {running: 0, scheduled: 0})
+        
+    
     })
 })

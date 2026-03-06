@@ -286,3 +286,6 @@ watch mode 시 context switching없고 효율적인 이유:
     1. 모든 assert 문 통과
     2. 다른 예외, err 발생안하는것 
     3. 제한 시간 내에 정상적으로 종료될것: async 함수가 마지막 줄까지 성공적으로 실행을 마쳐야 함
+
+
+18. Mocking
