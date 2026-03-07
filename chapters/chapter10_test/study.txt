@@ -289,3 +289,28 @@ watch mode 시 context switching없고 효율적인 이유:
 
 
 18. Mocking
+    - 기존엔 task1Completed, Promise.withResolvers() 등 스파이 작업(몇갠지 counting하는 요소)을 수동으로 했어야 함 
+    - NODE의 내장 기능인 모킹 기능 -> mock.fn()으로 각 작업을 감싸면, 스파이 생성됨. 테스트 종료 후에 mock.callCount()로 확인하면 됨 
+    -> 불필요한 플래그 변수나 프로미스 로직이 사라짐 
+    - Mocking은 외부 dependencies(filesystem, network, db)와 상호작용 시 powerful. 
+      unit test 할 때 꼭 real I/O를 할 필요 없을 때 모킹하고 sut에만 fully focus. 
+      
+
+    -   test('mock.fn 예제', () => {
+        // 아무 로직이 없는 가짜 함수 생성
+        const myFn = mock.fn();
+        myFn(1, 'a');
+      
+        // 가짜 함수에 실제 구현을 제공
+        const sum = mock.fn((a, b) => a + b);
+        sum(3, 4);
+        console.log(sum.mock.calls[0].arguments) //[3,4] 출력
+        console.log(sum.mock.calls[0].result) // 7 출력 
+      });
+    
+    - test.mock.method(object, methodName, [implementation]) 
+    이미 존재하는 객체의 특정 메서드를 가짜 구현으로 교체 
+    fs.readFile, db.query, fetch 등등 특정 객체에 소속된 메서드 대체 (mock.fn은 독립적인 mock 함수 만드는 것)
+
+    큰 장점은 테스트가 끝나면 자동으로 원래의 메서드로 복원시켜 준다는 점입니다. 이 덕분에 한 테스트의 모킹이 다른 테스트에 영향을 주는 "테스트 오염"을 방지할 수 있습니다.
+    
