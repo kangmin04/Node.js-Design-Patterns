@@ -312,5 +312,34 @@ watch mode 시 context switching없고 효율적인 이유:
     이미 존재하는 객체의 특정 메서드를 가짜 구현으로 교체 
     fs.readFile, db.query, fetch 등등 특정 객체에 소속된 메서드 대체 (mock.fn은 독립적인 mock 함수 만드는 것)
 
-    큰 장점은 테스트가 끝나면 자동으로 원래의 메서드로 복원시켜 준다는 점입니다. 이 덕분에 한 테스트의 모킹이 다른 테스트에 영향을 주는 "테스트 오염"을 방지할 수 있습니다.
+    - 큰 장점은 테스트가 끝나면 자동으로 원래의 메서드로 복원시켜 준다는 점입니다. 이 덕분에 한 테스트의 모킹이 다른 테스트에 영향을 주는 "테스트 오염"을 방지할 수 있습니다.
+    - BUT mock.fn의 경우 새로운 가짜 함수를 생성하는 것 (아무것도 대체하지않으며, 주로 콜백or DI 위해 사용 )
     
+    - global 객체의 fetch 메서드를 아래의 async 함수로 대체함. 
+    global = 전역객체. node에선 fetch는 전역객체임 
+    (fs의 객체의 readFIle의 경우: t.mock.method(fs, 'readFileSync', () => fakeContent); 처럼 구현하면 됨)
+    t.mock.method(global, 'fetch', async _url => ({
+      ok: true,
+      status: 200,
+      headers: {
+        get: key =>
+          key === 'content-type' ? 'text/html; charset=utf-8' : null,
+      },
+      text: async () => mockHtml,
+    }))
+
+
+    - fetch 
+        node built in fetch is using undici! 
+        Pros:
+            No additional dependencies required
+            Works across different JavaScript runtimes
+            Automatic compression handling (gzip, deflate, br)
+            Built-in caching support (in development)
+        Cons:
+            Limited to the undici version bundled with your Node.js version
+            Less control over connection pooling and advanced features
+            Error handling follows Web API standards (errors wrapped in TypeError)
+            Performance overhead due to Web Streams implementation
+            */
+            undici 따로 설치 안해도, console.log(process.versions.undici); //7.21.0 출력됨

@@ -18,13 +18,15 @@
     "csv-parse": "^6.1.0",
     "ejs": "^3.1.9",
     "express": "^4.21.2",
+    "htmlparser2": "^10.1.0",
     "level": "^10.0.0",
     "mkdirp": "^3.0.1",
     "openssl": "^2.0.0",
     "parallel-transform": "^1.2.0",
     "split2": "^4.2.0",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "undici": "^7.22.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
