@@ -343,3 +343,31 @@ watch mode 시 context switching없고 효율적인 이유:
             Performance overhead due to Web Streams implementation
             */
             undici 따로 설치 안해도, console.log(process.versions.undici); //7.21.0 출력됨
+
+
+    - Nodejs의 core module mock 
+       t.mock.module (또는 t.mock.method)의 두 번째 인자는 **"해당 모듈을 import 했을 때 가져올 가짜(mock) 구현"**을 정의하는 부분입니다.
+
+        access, mkdir, writeFile을 전부 목 함수로 만든 이유: saveConfig.mjs 파일이 내부적으로 fs/promises 모듈의 이 함수들을 사용하기 때문입니다. 단위 테스트(unit test)의 핵심은 테스트 대상(saveConfig)을 외부 환경(실제 파일 시스템)으로부터 "격리"하는 것입니다. 실제 파일 시스템에 접근하는 대신, 우리가 제공한 가짜 함수(mockAccess, mockMkdir 등)를 실행하게 만들어 saveConfig의 로직이 올바른지만을 검증하는 것이죠.
+        테스트 시나리오 (정확합니다):
+
+        첫 번째 (폴더 없음): mockAccess가 'ENOENT' 에러를 던져서 "폴더가 없다"는 상황을 흉내 냅니다. 그러면 saveConfig가 mkdir를 호출해야만 정상이므로, mockMkdir가 호출되었는지(assert.strictEqual(mockMkdir.mock.callCount(), 1))를 확인합니다.
+        두 번째 (폴더 존재): mockAccess가 에러 없이 정상 완료되어 "폴더가 이미 있다"는 상황을 흉내 냅니다. 그러면 saveConfig는 mkdir를 호출하면 안 되므로, mockMkdir가 호출되지 않았는지(assert.strictEqual(mockMkdir.mock.callCount(), 0))를 확인합니다.
+
+         또한, import 시 동적 import 사용, 
+            mock이 된 후에!! import함. 
+            만약 mock전에 import 한다면, saveConfig 내의 실제 모듈이 반영됨. 즉, t.mock.method 적용안됨
+            mocking은 mock이 등록된 이후에 module이 로드되어야만 실헹됨
+            t.mock.module('fs~', {
+                cache: false, 
+                namedExports: {
+                    access: mock.fn(), 
+                ~ 
+                }
+            })
+            마찬가지로, cache: true면 기존에 가져온 모듈이 cache에 저장되서 mock 안됨
+            default 방식이 아닌, {}를 통해서 namedExports할것이기에 mock 함수 정의 시 헤당 객체의 값으로 해줘야함. 
+
+    - other dependency. 
+    db, payment, logging 등을 테스트 할 경우, unit 테스트 시 isolated 하게 유지해야함,. 
+    즉, 실제 invoke를 자제해야함, 
