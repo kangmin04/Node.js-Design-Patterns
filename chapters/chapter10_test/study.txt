@@ -371,3 +371,17 @@ watch mode 시 context switching없고 효율적인 이유:
     - other dependency. 
     db, payment, logging 등을 테스트 할 경우, unit 테스트 시 isolated 하게 유지해야함,. 
     즉, 실제 invoke를 자제해야함, 
+    똑같이, mock.module()로 정의해주면됨. 
+    (import는 dynamic하게 ! )
+
+    MODULE TEST의 단점: 
+    - tight coupling(한 dependency가 변경되면 테스트 코드도 변경되어야 함 )
+    - global scope (test 전역에서 영향 줌 -> afterEach()로 초기화 해서 해결함 )
+    , complex setup, and constraints on test concurrency(현재 node ver에선 concurrency: false로 해야 모듈 테스트 가능, BUT 이건 performace를 낮추는 방향.. )
+
+    이러한 단점들을 개선-> DI
+    DI(chapter 7에서 배운 내용:  dependencies of a component are provided as inputs by an external entity, 
+    often referred to as the injector. 
+    This injector can be anything from a simple initialization script to a fully featured container that maps and wires dependencies across the application. 
+    The main benefit of this approach is improved decoupling, especially for modules that rely on stateful or replaceable components (such as database clients or loggers). 
+    Instead of creating or importing their dependencies internally, modules receive them from the outside, which makes them easier to reuse, configure, and test.)
