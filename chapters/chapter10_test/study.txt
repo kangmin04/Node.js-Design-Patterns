@@ -385,3 +385,97 @@ watch mode 시 context switching없고 효율적인 이유:
     This injector can be anything from a simple initialization script to a fully featured container that maps and wires dependencies across the application. 
     The main benefit of this approach is improved decoupling, especially for modules that rely on stateful or replaceable components (such as database clients or loggers). 
     Instead of creating or importing their dependencies internally, modules receive them from the outside, which makes them easier to reuse, configure, and test.)
+    즉, DI 를 사용하면, 
+    1. 동적 import 할 필요 없다
+    2. 각 테스트를 concurrency하게 가능
+    3. 각 테스트 종료 후 모듈 초기화 안해줘도 됨. (
+        기존엔 mock.module로 mocking 하기위해서, dbMock 자체를 글로벌하게 둠
+        그 결과  각 테스트 시 reset을 해줘야했음. 
+        DI는 각 테스트 내부에 dbMock구현 -> 테스트 끝나몀ㄴ 영향 안주고 종료됨. 
+        )
+
+
+
+
+    
+
+    19. Integration TEST 
+    - unit 테스트로 db query 테스트 했었음. BUT unit테스트는 sql query가 올바른지, 실제 real 환경 리턴값과 가상 mock data가 같을거라고 확신 불가능 등의 우려가 있음. 
+    -> INTEGRATION TEST
+
+    -test에서 sqlite사용! 
+        In-Memory 방식: filename: ':memory:' 설정을 사용하면 디스크에 파일을 쓰지 않고 메모리상에서만 DB가 돌아갑니다. 테스트가 끝나면 데이터가 자동으로 사라지므로 매우 깨끗하고 빠릅니다.
+        Zero Setup: 별도의 DB 서버를 설치하거나 도커(Docker)를 띄울 필요 없이 라이브러리 설치만으로 즉시 실행 가능합니다.
+        경량성: 프로세스 내부에서 직접 실행되므로 네트워크 지연이 없습니다.
+
+
+
+
+    20. Lazy initialization
+    지연 초기화(Lazy Initialization) 패턴은 객체의 생성이나 값의 계산을 실제로 필요한 시점까지 미루는 디자인 패턴
+    쉽게 말해, "일단 준비만 해두고, 누군가 '그거 줘!'라고 부를 때 비로소 만드는 방식"입니다.
+
+    1. 왜 사용하는가? (장점)
+    - 성능 최적화: 프로그램 시작 시 모든 자원을 미리 생성하면 구동 속도가 느려집니다. 지연 초기화를 쓰면 초기 로딩 시간을 단축할 수 있습니다.
+    - 자원 절약: 생성 비용이 큰 객체(예: 데이터베이스 연결, 대용량 파일 로드)를 실제로 한 번도 사용하지 않는 경우, 불필요한 메모리 낭비를 막아줍니다.
+    - 의존성 해결: 초기화 시점에 필요한 다른 리소스가 아직 준비되지 않았을 때, 나중에 연결을 시도함으로써 에러를 방지할 수 있습니다.
+
+    2. 작동 원리
+    2-1. 보통 내부적으로 null인지 확인하는 로직을 포함합니다.
+    2-2. 객체 내부의 private 필드를 null로 둡니다.
+    2-3. 해당 객체에 접근하는 메서드(Getter)를 호출합니다.
+    2-5. 내부 필드가 null이면: 그때 객체를 생성하고 저장합니다.
+        이미 존재하면: 생성 과정 없이 저장된 값을 반환합니다.
+
+    3. 코드 예시 (Node.js/JavaScript)
+
+    export class DbClient {
+    #db; // 처음에는 아무것도 없음 (undefined/null)
+
+    async #connect() {
+        // 1. 이미 연결되어 있다면 새로 만들지 않고 기존 것을 반환 (재사용)
+        if (this.#db) {
+        return this.#db;
+        }
+
+        // 2. 실제로 필요한 이 시점에 비로소 비싼 자원(DB 연결)을 생성
+        console.log("실제 DB 연결 중...");
+        this.#db = await open({
+        filename: ':memory:',
+        driver: sqlite3.Database,
+        });
+        
+        return this.#db;
+    }
+
+    async query(sql) {
+        // 사용자가 쿼리를 날릴 때 비로소 connect가 호출됨
+        const db = await this.#connect();
+        return db.all(sql);
+    }
+    }
+
+    4. 지연 초기화의 단점 
+    - 첫 번째 호출의 지연: 누군가 처음 호출할 때 객체를 생성하므로, 그 첫 번째 사용자에게는 응답이 다소 느릴 수 있습니다.
+
+    - 스레드 세이프(Thread-Safety): 멀티스레드 환경(Java, C# 등)에서는 여러 스레드가 동시에 if (null) 체크에 진입했다가 객체를 여러 개 생성하는 문제가 생길 수 있어 동기화 처리가 필요합니다. 
+        (다행히 Node.js는 싱글 스레드 기반이라 이 문제에서 비교적 자유롭습니다.)
+
+    5. 지연 초기화으 단점 해결 방안
+    - 첫번째 호출이 느린걸 프리워밍으로 해결가능. 
+    시스템에 여유가 있는 시점(예: 서버 부팅 직후 또는 특정 유저가 로그인한 직후)에 미리 한 번 호출해서 배경에서 초기화를 끝내두는 기법
+
+    6. 효율적 사용법
+    주로 테스트 환경에서 사용하면됨! 
+    100개 중 10개만 할건데 eager로 하면 안쓰는 90개까지 모두됨
+
+    <-------------> 
+    lazy initialization 과 반대는 eager initialization.,
+    즉, 코드 시작하면 바로 db든 뭐든 실행시킴. 
+    에러를 즉각적으로 확인 가능해서 소규모 개발 시 유리
+    export class EagerDbClient {
+        constructor() {
+        // 인스턴스를 만들자마자 바로 연결 시도
+        this.db = this.connectSync(); 
+  }
+}
