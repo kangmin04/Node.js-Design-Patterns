@@ -408,7 +408,50 @@ watch mode 시 context switching없고 효율적인 이유:
         Zero Setup: 별도의 DB 서버를 설치하거나 도커(Docker)를 띄울 필요 없이 라이브러리 설치만으로 즉시 실행 가능합니다.
         경량성: 프로세스 내부에서 직접 실행되므로 네트워크 지연이 없습니다.
 
+    - integration테스트 시 차이점. 
+    기존 unit 테스트에서는 query로 불러오는것과 balance 로직을 같이 했음. 
+            /* canPay function에 인자로 db를 넣어서 dependency Injection 
+        tight coupled된걸 해소가능. 
+        dependency를 외부에서 가져와서 dependency가 수정된해도 테스트 로직은 변경 할 필요 없다. 
+        */
+        export async function canPayWithVouchers(db, userId, amount) {
+            const vouchers = await db.query(
+            `SELECT * FROM vouchers
+                WHERE user_id = ? AND
+                balance > 0 AND
+                expiresAt > NOW()`,
+            [userId]
+            )
+            const availableBalance = vouchers.reduce((acc, v) => acc + v.balance, 0)
+            return availableBalance >= amount
+        }
+    BUT integration에선 sql query도 타당한지 확인해야함. 
+    즉, query로직과 계산을 다른 함수로 구분! 
 
+        export async function getActiveVouchers(db, userId){
+        const vouchers = await db.query(
+            `SELECT * FROM vouchers
+            WHERE user_id = ? AND
+            balance > 0 AND
+
+            expiresAt > strftime('%FT%T:%fz', 'now')`, 
+            [userId]
+        )
+        //strftime('%FT%T:%fz', 'now')는 SQLite 함수로, 현재 시간을 YYYY-MM-DDTHH:MM:SS:sssZ 형식의 문자열로 변환
+        return vouchers
+        }
+
+        export async function canPayWithVouchers(db, userId, amount) { 
+            const vouchers = await getActiveVouchers(db, userId)
+            const availableBalance = vouchers.reduce((acc, v) => acc + v.balance, 0)
+            return availableBalance >= amount
+        }
+
+
+    - 추가 상식.,
+    promise를 리턴하는 db.query같은경우, 한 함수에서 로직이 프로미스 리턴이 전부라면 굳이 await db.query()가 아닌 return db.query로 프로미스 자체를 리턴해도 무방
+    BUT 한 함수 내애서 다른 동기적 로직이 있다면 await 하자. ( addVoucher함수는 단순 프로미스를 반환하는게 아닌 record를 반환함. 
+    즉, db query에 await 안해주면 record를 db에 저장안한채 동기적으로 반환. (db err이 난 경우에도 record는 정상적ㅇ로 리턴되므로 문제임. )  )
 
 
     20. Lazy initialization
@@ -479,3 +522,20 @@ watch mode 시 context switching없고 효율적인 이유:
         this.db = this.connectSync(); 
   }
 }
+
+
+    21. sqlite 데이터 저장 방식 차이 
+        1. in memory
+        : integation test에서 각 테스트를 isolated 보장을 위해서 사용함, 
+        filename으로 :memory: 전달. 
+        -> 디스크에 저장이 아닌, RAM(메모리)에 저장. 
+        - 프로세스 종료되면 사라짐. 
+        - 자동화된 테스트를 위하여주로 사용됨. 
+        
+        2. 파일 기반 
+        : const db = new DbClient('./my_database.sqlite') 일반적인 데이터베이스 형태
+        - 데이터가 지정된 경로에 저장되서 파일에 그대로 남음
+        - 속도는 디스크에서 가져오다보니 느림
+        - 대부분의 애플리케이션에서 영구적으로 저장하기에 사용함. 
+
+ 
