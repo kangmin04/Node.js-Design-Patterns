@@ -5,9 +5,5 @@ import { createEvent, reserveSeat } from "./booking.mjs";
 
 const db = new DbClient('data/db.sqlite')
 await createTables(db); 
-const returnId = await createEvent(db, 'event1', 5);
-console.log('첫 이벤트의 id', returnId)
-await reserveSeat(db, returnId, 'user1')
-
-// const app = await createApp(db)
-// app.listen({port: 3000})
+const app = await createApp(db)
+app.listen({port: 3000})

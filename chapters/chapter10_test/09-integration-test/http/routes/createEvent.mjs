@@ -16,6 +16,7 @@ export function createEventRoute(fastify){
         async handler(request, reply){
             const {name, totalSeats} = request.body;  //클라이언트가 보낸 유효성 검시를 마친 데이터 
             const eventId = await createEvent(fastify.db, name, totalSeats)
+           
             return reply.status(201).send({success: true, eventId})
         }
     })

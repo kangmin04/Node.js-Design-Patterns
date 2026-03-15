@@ -5,7 +5,7 @@ export async function reserveSeat(db, eventId, userId) {
   const [event] = await db.query(`SELECT * FROM events WHERE id = ?`, [eventId]) /* select로 가져온 값이 배열이다. 그래서 내부 객체만을 가져오기 위해, [event] 형식으로 받는다 */
 
   if(!event){
-    throw new Error('Event doesnt exist')
+    throw new Error('Event not found')
   }
   const existing = await db.query(`SELECT COUNT(*) AS count FROM reservations WHERE eventId = ?` , [eventId]); 
   if(existing[0].count >= event.totalSeats){
