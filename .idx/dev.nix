@@ -1,3 +1,4 @@
+
 # To learn more about how to use Nix to configure your environment
 # see: https://developers.google.com/idx/guides/customize-idx-env
 { pkgs, ... }: {
@@ -6,7 +7,12 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.nodejs #20-> 22 UPDATE
+    pkgs.docker
   ];
+
+  # Enable the Docker daemon service at the top level
+  services.docker.enable = true;
+
   # Sets environment variables in the workspace
   env = {
     NPM_CONFIG_PREFIX = ""; # 여기서 변수를 초기화합니다.
