@@ -544,6 +544,33 @@ watch mode 시 context switching없고 효율적인 이유:
     - 사용자 관점에서 product validate, simulate user behavior .. 
     - integration test에서 진행한 테스트는 api만 테스트. 실제 user 관점으론 테스트 안해봄
     - e2e는 black box testing! 
+    
+    - e2e 테스트를 위한 다양한 테스트가 존재하나, playwright을 사용함. 
+    playwright : 
+        - 과거엔 비동기적인 작업들의 경우 timeout, sleep 등으로 처리햇음. 
+          BUT playwright의 도입으로 각 기능이 화면에 보이거나 가능할 때까지 기다린 후 실행됨. 
+        - page object로 사용. page.goto()이런식, 항상 프로미스 반환하기에 await 사용해주자. 
+        - node:assert의 expect는 directly하게 condition check 해줬으나, 
+          playwright의 expect(element).toBeVisible()의 경우 element가 dom 내에 visible할때까지 기다림. 
+          이와 유사한 다양한 built-in locators 있음. (page.getByRole())형식.
+          locator.click(),fill()등 가능 
+
+           assertion
+            - Synchronous: expect(something)toEqual(), expect(something)toContain() 등... 
+            - asynchronous: await expect(page).toHaveTitle(/playwright/) 처럼 title이 나올때까지 기다림 
+
+            위와같은 web-first-assertions(asynchronous assertion) 은 5초의 timeout이 존재함. 
+            BUT 그 외의, Synchronous/actions(click, fill)/navigation(goto)등은 timeout 존재안함. 즉, 전체 테스트 타임 초과로종료될수있음. 
+            -> globaly하게 timeout, actionTimeout, navigationTimeout 등으로 timeout 줄수있다~  
+
+
+
+
+
+
+
+
+
 
 
     23.  Docker
