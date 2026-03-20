@@ -4,8 +4,6 @@ import { setImmediate } from 'node:timers/promises';
 import { fetchWithRetry } from './retry.mjs';
 
 suite('test code' , () => {
-
-
     test('retry test' , async () => {
         const asyncFn = mock.fn(async (i) => { 
         await setImmediate(); 

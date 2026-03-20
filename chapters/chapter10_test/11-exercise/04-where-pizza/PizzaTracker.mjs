@@ -1,23 +1,27 @@
 export class PizzaTracker {
     #db
+    static STATUS = {DELIVERED : 'delivered'}
+    /* static: 클래스의 정적 멤버 선언 시 사용 
+    인스턴스에 속하는 게 아닌 클래스 자체에 속함 */
+
     constructor(sql){
         this.#db = sql;  //createTable을 생성자 내에 넣지말고 명시적으로 적어두자. 
     }
-
+    
     async placeOrder(id, customerName, pizzaType){
         await this.#db.query(`INSERT INTO orders(id, customerName, pizzaType, status, eta ) VALUES (?,?,?,?,?)` , [id, customerName, pizzaType, 'pending', null])
     }
 
     async getOrders(){
-        return this.#db.query(`SELECT * FROM orders`)
+        return this.#db.query(`SELECT * FROM orders ORDER BY id  ASC`)
     }
 
     async markAsDelivered(id){ //order id 기반으로 진행 
-        await this.#db.query(`
+        const result = await this.#db.query(`
             UPDATE orders
-            SET status = "delivered"
+            SET status = ?
             WHERE id = ?
-            ` , [id])
+            ` , [PizzaTracker.STATUS.DELIVERED,id])
     }
 
     async updateEta(id, eta){
