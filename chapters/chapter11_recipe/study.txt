@@ -1,0 +1,63 @@
+1. Dealing with asynchronously initialized components. 
+      ㅇ NODE에서 동기 함수들 존재이유? 
+        - 간단한 프로그램에서 initialization 시 간편하게 가능. 
+          (이걸 비동기적으로 구현하려면 코드가 상당히 복잡해지는 경우도 있다.)
+      ㅇ BUT 동기 API만 사용하면 안됨. 
+        - Node는 싱글 스레드 기반의 이벤트 루프 사용. 
+          만약 서버의 라우터 핸들러에서 DB와 동기식으로 연결 OR 파일을 읽을 땐, 작업이 끝날 때까지 서버 전체가 멈춤. 
+        - 현대의 미들웨어(db, 메시지 큐)는 네트워크 통신을 전제로 함. 
+          핸드쉐이크 등 과정에서 네트워크 지연은 필연적 발생. 이때 동기 API 라면 마찬가지로 전체가 멈춤
+
+      o 01-asynchronous-init/db.mjs 코드 설명 
+
+        BUT conect() 호출을 깜빡하거나, await connect()가 아닌 ONLY connect()만 작성할 경우 -->  ERROR(NOT CONNECTED YET)
+        - 해결법 2가지
+            1. db.connect가 안된 경우 연결될 때까지 기다린 후 실제 쿼리를 수행함! 
+                async function getUsers(){
+                    if(!db.connected){
+                        await db.connect(); 
+                    }
+                    await db.query(`SELECT * FROM users`)
+                }
+                **ps1: if를 사실 생략해도됨. 
+                많은 db는 멱등성을 고려하여 설계됨
+                db.connect() 호출 시 이미 연결되어있다면 즉시 완료된 promise를 반환함. 즉, if 없이 await db.connect() 해도 프로그램엔 전혀 문제 없다. 
+                
+                BUT IF를 사용하는 이유! 
+                - 이벤트 루프 효율성(성능최적화)를 위해서. 
+                await 키워드를 만나면 해당 함수는 잠시 중단되고, 제어권이 이벤트 루프로 감. 
+                비록 db.conenct()가 즉시 ㅡㅍ로미스 반환하더라도 비동기 호출 자체가 마이크로태스크 큐에 등록되는것. 
+                if 사용하면 연결된 경우, await 안만나고 바로 동기적으로 db.query 실행하게됨. 
+                
+                **ps2. query 메서드 자체에 check 로직 넣음. -> consumer에서 provider로 burden 이동시킴 
+
+            2. Delayed startup
+                - asynchronous한 작업들을 전부 미리 돌리고, 이후 실제 코드 진행하는 방법. 
+                async function getConnectedDb(){
+                    await db.connect(); 
+                    return db; 
+                }
+                async function getUsers(db){
+                    await db.query(`SELECT * FROM users`)
+                }
+                const db = await getConnectedDb(); 
+                await getUsers(connectedDb)
+
+                단점: connectedDb 인스턴스를 전달해야하므로, 코드가 복잡해지면 어떤 함수들에 해당 connectedDb가 필요한지 헷갈릴 수 있음. (혹은 새로운 기능이 해당 db 객체가 필요한지 모를수도)
+
+                해결: asynchronous를 우선 실행하고 이후 코드 실행. 
+                예시: 
+                    async function bootstrap(){
+                        try{
+                            await Promise.all([db.connect(), redis.connect(), loadCOnfig()])
+                            
+                            startServer(); 
+                        }catch(err){
+                        log(err)
+                        }
+                    }
+                BUT 전체 코드 시간이 늘어나고, 사용안하는거도 초기화해서 낭비 심함. 또한 서버 중 db가 갑자기 끊겼을 때 이미 초기화 로직은 지나가서 큰일.. 
+
+
+                
+    
