@@ -61,3 +61,62 @@
 
                 
     
+Async/await 복습
+  ㅇ 콜스택: 함수가 호출되면 스택에 쌓이고(push), 함수의 실행이 끝나 return 되면 스택에서 빠져나옵니다(pop).
+            항상 "하나씩만" 처리하며, 스택의 가장 위에 있는 함수가 현재 실행되는 함수입니다. 콜 스택이 비어있다는 것은 JS 엔진이 할 일이 없다는 뜻입니다.
+  ㅇ WEB API, NODEJS API: setTimeout, fetch, fs.readFile 등의 비동기 함수는 호출되면 바로 WEBAPI에 위임됨. -> 기다리지않고 바로 다음 코드 실행함. 완료되면 WEBAPI에 등록된 콜백함수를 태스크 큐로 보냄 
+  ㅇ 태스크큐: setTimeout 함수의 콜백, setInterval 함수의 콜백, I/O 작업 콜백 
+  ㅇ 마이크로 태스크 큐: Promise의 then, catch, finally 콜백, await 뒷 부분의 코드. 한 태스크큐가 끝난 직후, 바로 마이크로태스크 큐의 모든작업이 빌때까지 꺼내져서 실행
+
+  ㅇ 이벤트 루프 순서: 
+    [매크로태스크 확인] 매크로태스크 큐에 작업이 있는지 확인합니다.
+    [매크로태스크 실행] 작업이 있다면, 하나를 꺼내 콜 스택으로 옮겨 실행합니다.
+    이때 실행된 코드가 Promise를 만들면, 그 .then() 등은 마이크로태스크 큐로 들어갑니다.
+    이때 실행된 코드가 setTimeout을 만들면, Web API로 보내집니다.
+    [매크로태스크 완료] 콜 스택에 들어갔던 매크로태스크가 완료되고 콜 스택이 비워집니다.
+    [마이크로태스크 실행] 즉시 마이크로태스크 큐를 확인합니다.
+    [마이크로태스크 소진] 마이크로태스크 큐에 작업이 있다면, 큐가 완전히 빌 때까지 모든 작업을 순서대로 꺼내 실행합니다. 이 과정에서 새로운 마이크로태스크가 추가되면, 그것마저도 이번 사이클에서 전부 실행합니다.
+
+    // 메인 스크립트 실행 (첫 번째 매크로태스크 시작)
+    console.log('Start');
+    await setTimeout(600); // 여기서 무슨 일이?
+    console.log('End'); // 두 번째 updateLastAccess() 호출과 같은 역할
+
+
+    T=0ms (첫 번째 Tick):
+
+    매크로태스크 큐에서 "메인 스크립트 실행" 작업을 꺼내 콜 스택에 올립니다.
+    console.log('Start')가 실행되고 콜 스택에서 빠집니다.
+    setTimeout(600)이 호출됩니다.
+    Promise가 즉시 반환됩니다.
+    setTimeout 자체는 Web API로 보내져 600ms 타이머가 시작됩니다.
+    await 키워드가 setTimeout이 반환한 Promise를 만납니다.
+    await는 "메인 스크립트" 함수의 실행을 여기서 '일시정지' 시킵니다.
+    "메인 스크립트" 실행 컨텍스트가 콜 스택에서 빠져나옵니다. (중요!)
+    첫 번째 매크로태스크의 동기적 실행 부분이 끝났고, 콜 스택이 비었습니다.
+    마이크로태스크 큐를 확인합니다. 비어있습니다.
+    첫 번째 Tick이 종료됩니다. 이벤트 루프는 이제 할 일이 없고, Web API에서 무슨 일이 생기기만 기다립니다.
+    T=600ms:
+
+    Web API에서 600ms 타이머가 완료됩니다.
+    Web API는 setTimeout의 Promise를 fulfilled 상태로 만드는 콜백 함수를 매크로태스크 큐에 넣습니다.
+    T=600ms (두 번째 Tick):
+
+    이벤트 루프는 매크로태스크 큐에서 "Promise fulfilled 콜백"을 꺼내 콜 스택에 올립니다.
+    이 콜백이 실행되면서 await가 기다리던 Promise가 드디어 완료됩니다.
+    Promise가 완료되었기 때문에, await 뒷부분에 있던 코드(console.log('End'))가 마이크로태스크 큐에 들어갑니다. (중요!)
+    "Promise fulfilled 콜백"의 역할이 끝나고 콜 스택에서 빠져나옵니다. 콜 스택이 비었습니다.
+    이벤트 루프는 즉시 마이크로태스크 큐를 확인합니다.
+    console.log('End')를 실행하는 작업을 꺼내 콜 스택에 올립니다.
+    console.log('End')가 실행되고 콜 스택에서 빠져나옵니다.
+    마이크로태스크 큐가 비었습니다.
+    두 번째 Tick이 종료됩니다.
+
+
+
+  ㅇ Symbol
+    - 이름 충돌 방지 및 은닉을 위해서 사용함. 
+    - computed property name:  
+        mykey ='name'
+        obj = {[mykey] : 'Alice'} 이면 obj.name으로 alice 참조가능 
+    - symbol도 동일: const deactivate = Symbol('deactivate');

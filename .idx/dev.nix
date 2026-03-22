@@ -8,10 +8,14 @@
   packages = [
     pkgs.nodejs #20-> 22 UPDATE
     pkgs.docker
+    # Added for Playwright browser dependencies
+   
   ];
 
   # Enable the Docker daemon service at the top level
   services.docker.enable = true;
+
+  # Add the current suer to the 'docker' group
 
   # Sets environment variables in the workspace
   env = {
