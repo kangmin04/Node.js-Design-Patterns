@@ -13,8 +13,9 @@ class Database {
 
             this.#pendingConnection = setTimeout(500); 
             await this.#pendingConnection; 
-            this.connect = true; 
+            this.connected = true; 
             this.#pendingConnection = null; 
+            
             while(this.commandsQueue.length > 0){
                 const command = this.commandsQueue.shift(); 
                     command(); 
@@ -24,7 +25,7 @@ class Database {
     }
 
     async query(queryString){
-        if(!this.connect){
+        if(!this.connected){
             console.log(`Requested queueString: ${queryString}`)
             return new Promise((resolve, reject) => {
                 const command = () => {
