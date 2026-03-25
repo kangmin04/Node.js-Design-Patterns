@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
-import { totalSales } from "./totalSales.mjs";
-
+// import { totalSales } from "./totalSales.mjs";
+// import { totalSales } from "./totalSalesBatch.mjs";
+import { totalSales } from "./totalSalesCache.mjs";
 createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost')
     const product = url.searchParams.get('product'); 
