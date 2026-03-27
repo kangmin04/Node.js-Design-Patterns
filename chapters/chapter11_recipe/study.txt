@@ -1,0 +1,47 @@
+  ㅇ CPU BOUND TASK.. 
+    - node는 single thread며 event loop가 block될 경우 문제가 될수있다. 
+    subsetSum문제처럼 방대한 양의 동기 실행 코드가 실행될경우, event loop는 block되서 다른 작업이 안됨. 즉, DoS(massive amount of traffic으로 서버 장애) 가 생길수있음
+
+  
+  
+  ㅇ EventEmitter
+    - Node.js에서 **옵서버 디자인 패턴(Observer Design Pattern)**을 구현한 것입니다. 
+      이 패턴은 객체 간의 느슨한 결합(loose coupling)을 가능하게 하여, 한 객체(Subject)의 상태가 변할 때 그 객체에 의존하는 다른 객체(Observers)들에게 자동으로 알림이 가도록 하는 프로그래밍 기법입니다.
+
+
+    - 원리
+    EventEmitter 내부는 이벤트 이름을 키(key)로, 해당 이벤트를 처리할 함수(리스너)들의 배열을 값(value)으로 가지는 객체와 같습니다.
+    on('match', callback) 코드를 실행하면, 'match'라는 이름의 배열에 callback 함수가 추가됩니다.
+    이렇게 특정 이벤트가 발생했을 때 실행될 함수를 미리 등록해두는 과정을 "구독(Subscription)"이라고 합니다.
+    // EventEmitter 내부의 가상적인 모습
+    this.events = {
+        'match': [callback1, callback2, ...],
+        'end': [anotherCallback, ...]
+    };
+
+
+    emit('match', someData) 코드가 실행되면, EventEmitter는 내부적으로 'match'라는 이름의 배열을 찾습니다.
+    그리고 그 배열에 등록된 모든 리스너 함수들을 순서대로 실행합니다. 이때 emit의 두 번째 인자부터는 리스너 함수로 전달될 인자(...args)가 됩니다.
+    이 과정을 "발행(Publication)"이라고 합니다.
+    사용자께서 보여주신 SubsetSum 클래스를 예로 들어보겠습니다.
+
+    class SubsetSum extends EventEmitter: SubsetSum 클래스가 EventEmitter의 모든 기능(on, emit 등)을 상속받습니다. 이제 SubsetSum의 인스턴스는 이벤트를 발행하고 구독할 수 있는 주체(Subject)가 됩니다.
+
+    subsetSum.on('match', match => { ... }): SubsetSum 인스턴스(subsetSum)에게 'match'라는 이벤트가 발생하면 전달된 콜백 함수를 실행하라고 등록(구독)하는 부분입니다. 여기서 콜백 함수는 옵서버(Observer) 역할을 합니다.
+
+    this.emit('match', subset): processSubset 메서드 안에서 합계가 일치하는 부분집합(subset)을 찾았을 때, emit을 통해 'match' 이벤트를 발생(발행)시킵니다. 동시에 찾은 subset 데이터를 함께 전달합니다.
+
+    결과: 'match' 이벤트가 emit되면, on으로 등록해 두었던 콜백 함수가 실행되면서 subset 데이터를 인자로 받아 res.write(...)를 수행하게 됩니다.
+
+
+
+  ㅇ res.write와 TCP packet(운영체제 관점)
+    1. res.write() 시 데이터는 즉시 OS로 가지 않고, Node.js가 관리하는 **내부 버퍼(internal buffer)**에 먼저 기록
+    2. chunk가 생길 때마다 네트워크요청(시스템콜)은 비효율적. -> 버퍼링 (내부버퍼에 어느정도 쌓일때까지 기다림)
+    3. 다음의 경우 FLUSH 됨
+        내부 버퍼가 가득 찼을 때
+        스트림이 끝났을 때 (res.end())
+        개발자가 명시적으로 버퍼를 비우라고 명령했을 때 (res.uncork() 또는 socket.flush())
+        데이터 흐름이 잠시 멈춰서 "이제 보낼 때가 됐다"고 Node.js가 판단했을 때
+    4. OS가 TCP 패킷 생성
+        시스템콜을 통해 OS 커널에 전달. TCP 세그멘테이션. TCP완성
