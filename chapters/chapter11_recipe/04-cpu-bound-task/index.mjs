@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
-import { SubsetSum } from './subsetSum.mjs'
-// import { SubsetSum } from './subsetSumDefer.js'
+// import { SubsetSum } from './subsetSum.mjs'
+import { SubsetSum } from './subsetSumDefer.mjs'
 // import { SubsetSum } from './subsetSumFork.js'
 // import { SubsetSum } from './subsetSumThreads.js'
 

@@ -45,3 +45,67 @@
         데이터 흐름이 잠시 멈춰서 "이제 보낼 때가 됐다"고 Node.js가 판단했을 때
     4. OS가 TCP 패킷 생성
         시스템콜을 통해 OS 커널에 전달. TCP 세그멘테이션. TCP완성
+
+
+
+
+
+
+ ㅇ 이벤트루프 
+  - Node.js 이벤트 루프의 6단계 순환
+1. 타이머(Timers) 단계
+역할: setTimeout()과 setInterval()로 예약된 콜백을 처리합니다.
+특징: 엄밀히 말하면 "지정된 시간 후"에 실행하는 것이 아니라, **"지정된 시간이 지난 후 가장 먼저 돌아오는 타이머 단계"**에서 실행됩니다. 따라서 약간의 오차가 발생할 수 있습니다.
+
+2. 대기 콜백(Pending Callbacks) 단계
+역할: 이전 루프에서 완료되었지만 실행되지 못하고 미뤄진 I/O 콜백들을 실행합니다.
+특징: 주로 TCP 오류 같은 시스템 작업의 콜백이 여기서 처리됩니다.
+
+3. 유휴, 준비(Idle, Prepare) 단계
+역할: Node.js 내부의 관리를 위해 사용되는 단계입니다.
+특징: 개발자가 직접 제어할 수 없으며, 엔진이 다음 단계를 준비하는 과정입니다.
+
+4. 폴(Poll) 단계 (가장 중요 ⭐)
+역할: 새로운 I/O 이벤트를 가져오고(File 읽기, Network 요청 등) 관련 콜백을 실행합니다.
+동작 방식: 1. 큐에 콜백이 있다면 다 처리할 때까지 실행합니다.
+2. 큐가 비어있다면? 바로 다음 단계로 가는 게 아니라 잠시 기다립니다(Polling).
+3. 만약 setImmediate가 예약되어 있다면 기다리지 않고 바로 체크(Check) 단계로 넘어갑니다.
+
+5. 체크(Check) 단계
+역할: 오직 setImmediate() 콜백만을 위한 단계입니다.
+특징: Poll 단계에서 I/O 작업을 확인한 직후에 바로 실행되도록 설계되었습니다. 그래서 I/O 콜백 안에서 setImmediate를 쓰면 다음 루프가 아니라 현재 루프의 체크 단계에서 바로 실행될 확률이 높습니다.
+
+6. 종료 콜백(Close Callbacks) 단계
+역할: socket.on('close', ...)이나 db.close() 같은 연결 종료와 관련된 콜백을 처리합니다.
+
+
+import { readFile } from 'node:fs/promises';
+
+console.log('1. 시작');
+
+async function runDemo() {
+  // (A) 타이머 설정
+  setTimeout(() => console.log('5. 타이머 완료 (10ms)'), 10);
+
+  // (B) Immediate 설정
+  setImmediate(() => console.log('4. Immediate 실행'));
+
+  // (C) 비동기 파일 읽기 (I/O)
+  console.log('2. 파일 읽기 요청');
+  await readFile('test.txt'); // 비동기 지점
+  console.log('3. 파일 읽기 완료');
+}
+
+runDemo();
+console.log('끝 (동기 코드 종료)');
+
+
+파일 읽기에 5ms가 걸리고, 전체 루프 한 바퀴가 매우 빠르게 돈다고 가정했을 때
+0ms Main Script1. 시작 출력 -> setTimeout, setImmediate 예약 -> 2. 파일 읽기 요청 출력 -> await를 만나 runDemo 일시 중단 -> 끝 출력.
+1ms Microtask Queueawait 이후의 작업이 마이크로태스크 큐에 등록됨 (하지만 아직 파일 읽기가 안 끝남).
+2ms Timers10ms가 안 되었으므로 통과.
+3ms Poll (I/O)새로운 I/O 이벤트가 있는지 확인. (아직 파일 읽기 중)
+4ms Check4. Immediate 실행 출력. (setImmediate 콜백 처리)
+5ms Poll (I/O)파일 읽기 완료! OS로부터 신호를 받음. 마이크로태스크 큐에 3. 파일 읽기 완료 실행 예약.
+5.1ms Microtask Queue3. 파일 읽기 완료 출력. (단계 전환 직전 마이크로태스크 우선 처리)
+10ms Timers설정한 10ms 경과. 5. 타이머 완료 출력.
