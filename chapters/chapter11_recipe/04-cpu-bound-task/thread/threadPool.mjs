@@ -1,7 +1,6 @@
-import { fork } from "node:child_process";
-/* 여러 개의 자식 프로세스(worker)를 미리 만들어 놓고, 
-   필요할 때마다 빌려 쓰고 다 쓰면 반납하는 방식으로 이러한 문제를 해결 */
-export class ProcessPool {
+import { Worker } from "node:worker_threads";
+
+export class ThreadPool {
     constructor(file, poolMax){
         this.file = file // 자식 프로세스가 실행할 파일 경로
         this.poolMax = poolMax; 
@@ -10,39 +9,30 @@ export class ProcessPool {
         this.waiting = [] //active 배열 꽉찼을 때부턴 여기에 저장 
     }
 
-    acquire(){ // 사용 가능한 자식프로세스를 요청해두고, 가능해지면 Promise로 반환함. 
+    acquire(){ 
         return new Promise((resolve, reject) => {
             let worker; 
             if(this.pool.length > 0){ // 사용 가능한 프로새스 존재 
-                worker = this.pool.pop(); 
+                worker = this.pool.pop();
 
-                 // --- 👇 이 로그를 추가해주세요 ---
-                console.log(`[Pool ->] PID: ${worker.pid} popped from pool. Has timeoutId? ${!!worker.timeoutId}`);
-                // --------------------------------
-
-                if(worker.timeoutId){
-                    console.log(`clear timeoutid: ${worker.timeoutId}, worker pid: ${worker.pid}`)
-                    clearTimeout(worker.timeoutId)
-                }
+                // if(worker.timeoutId){
+                //     console.log(`clear timeoutid: ${worker.timeoutId}, worker pid: ${worker.pid}`)
+                //     clearTimeout(worker.timeoutId)
+                // }
                 this.active.push(worker); 
                 return resolve(worker)
             }
 
-            if(this.active.length >= this.poolMax){ //가용 프로세스 개수 초과 시 waiting에 넣음 
+            if(this.active.length >= this.poolMax){ 
                 return this.waiting.push({resolve, reject})
             }
-            // pool은 비었지만, 아직 pool의 최대치에 도달하지않은경우 자식 프로세스 생성 
-            worker = fork(this.file); 
-            worker.once('message', message => {
-                if(message === 'ready'){ // 생성된 프로세스가 ready 보내면 초기화 완료된 것. -> active 목록에 추가하고 요청자에게 반환
+            
+            worker = new Worker(this.file); 
+            worker.once('online',  () => {
                     this.active.push(worker); 
-                    return resolve(worker)
-                }
-                //ready가 아니면 kill해야함. ( message 보냈다면 자식프로세스가 부모 프로세스에게 무언가를 보낸것. 근데 ready가 아니면 준비된 상태가 아닌 상태에서 메세지를 받은것. )
-                worker.kill(); 
-                reject(new Error('Improper process start'))
-            })
-             
+                    resolve(worker)
+                })
+                
             //exit:  process.exit으로 스스로 종료할때나, 비정상오류(크래시) 발생, worker.kill(부모가 강제종료) 한 경우 exit 이벤트 발생함.
             worker.once('exit', code => {
                 console.log(`Worker exited with code ${code}`)
@@ -62,11 +52,11 @@ export class ProcessPool {
         this.active = this.active.filter( w => worker !== w)
 
         /* idle한 프로세스 kill하기 */
-        worker.timeoutId = setTimeout(() => {
-            worker.kill(); 
-            console.log(`${worker.pid} killed`); 
-        } , 10* 1000)
-        console.log(`[Pool <-] PID: ${worker.pid} pushed to pool with timeoutId: ${worker.timeoutId}`);
+        // worker.timeoutId = setTimeout(() => {
+        //     worker.kill(); 
+        //     console.log(`${worker.pid} killed`); 
+        // } , 10* 1000)
+        // console.log(`[Pool <-] PID: ${worker.pid} pushed to pool with timeoutId: ${worker.timeoutId}`);
         this.pool.push(worker); 
     }
 }

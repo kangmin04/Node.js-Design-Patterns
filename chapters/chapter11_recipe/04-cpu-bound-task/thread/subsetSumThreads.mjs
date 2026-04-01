@@ -1,9 +1,10 @@
 import { EventEmitter } from "node:events";
 import { join } from "node:path";
-import { ProcessPool } from "./processPool.mjs";
+import { ThreadPool } from "./threadPool.mjs";
 
-const workerFile = join(import.meta.dirname, 'workers', 'subsetSumProcessWorker.mjs')
-const workers = new ProcessPool(workerFile, 5)
+const workerFile = join(import.meta.dirname, 'workers', 'subsetSumThreadWorker.mjs')
+const workers = new ThreadPool(workerFile, 2)
+
 export class SubsetSum extends EventEmitter {
     constructor(sum, set) {
       super()
@@ -13,7 +14,7 @@ export class SubsetSum extends EventEmitter {
 
     async start(){
         const worker = await workers.acquire()
-        worker.send({sum: this.sum, set: this.set}) /*  IPC channels serialize data automatically (JSON) -> enable to send objects */
+        worker.postMessage({sum: this.sum, set: this.set}) 
         const onMessage = msg => {
             if (msg.event === 'end') {// subsetSum task 종료될 경우 
               worker.removeListener('message', onMessage)
