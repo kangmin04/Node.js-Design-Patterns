@@ -10,7 +10,7 @@ import {
 
 async function saveFile(filename, content) {
   await recursiveMkdir(dirname(filename))
-  
+
   await writeFile(filename, content)
 }
 

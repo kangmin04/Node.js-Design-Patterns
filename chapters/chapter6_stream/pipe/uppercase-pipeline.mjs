@@ -10,7 +10,6 @@ const uppercasify = new Transform({
 })
 
 try{
-
     await pipeline( // 3
         process.stdin,
         createGunzip(),

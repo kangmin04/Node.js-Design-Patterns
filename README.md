@@ -1,4 +1,4 @@
-log# Node + Express Service Starter
+dlog# Node + Express Service Starter
 
 This is a simple hello world express.js server.
 
