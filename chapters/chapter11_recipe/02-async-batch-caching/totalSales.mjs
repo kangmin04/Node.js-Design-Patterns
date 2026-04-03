@@ -37,3 +37,8 @@ db.iterator()는 Async Iterable 객체를 반환
 조건부 계산: 루프 내부의 if (transaction.product === product)는 일단 데이터를 다 읽어온 후에 메모리 상에서 검사하는 방식입니다.
 결론: 10만 개의 데이터가 있다면 10만 번의 디스크 접근과 역직렬화(JSON Parse)가 발생하므로 응답 시간이 수백ms에서 수초까지 걸리게 됩니다.
 */
+
+
+/* db.iterator()은 readable stream. 
+readable stream은 eventEmitter을 상속함. 
+->  */

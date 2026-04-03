@@ -1,0 +1,13 @@
+  ㅇ exercise 1
+    - proxy에서 get은 단순 intercept 용.. 즉 proxy.method가 우리가 정의한 함수로 바뀐다 생각하자. 
+    - return new Promise를 언제줘야할지 가장 고민이었다. 
+    처음엔 get 함수 바로 밑에서 전체 코드들에 대해 resovle()로 반호나했는데, 비동기도 아닌데 굳이? 싶엇다
+    또한 proxy에서 args를 어떤식으로 처리해야ㅎ는지 몰랐엇다. 
+    내가 체크한 순서는  1. 비동기 작업이며 해당 watchMethod에 들어가는지 2. 그 외의 것은 동기함수 혹은  사전ㅂ준비가 안필요하니 바로 동기적 리턴으로 계획했어섣. 
+    BUT 여기선 initMethod가 호출되는지를 먼저 생각해줫어야햇다. 
+    init 호출된 경우면 프로미스로 .then()으로 이후 queue에서 전체를 처리하고 ( 이때 try catch !! 상당히 중욯다 )
+    
+    결론은 initMethod인지 체크 후 맞으면 -> 프로미스로 queue flush 작업 
+    initMethod 아니고, watchMethod인데, init 안된 경우면 (클로져로 변수 선언 ) queue에 resolve, reject, property, args 전달 
+
+    그거도 아니면 일반 함수는 target[property].apply(target, args)로 일반 호출 
