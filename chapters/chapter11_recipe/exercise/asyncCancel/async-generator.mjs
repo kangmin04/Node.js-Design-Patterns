@@ -28,7 +28,7 @@ function asyncJob(value) {
   // 3. "운전자" (Runner): 제너레이터를 실행하고, 던져진 할 일을 처리함
   async function run(generator) {
     const iterator = generator(); // 이터레이터 생성
-  
+
     let result = { value: undefined, done: false };
     while (!result.done) {
       // 제너레이터가 던진 '할 일(Promise)'을 받아서 실행하고 기다림
@@ -37,7 +37,10 @@ function asyncJob(value) {
       console.log(`(Runner) Job 처리 완료, 결과: ${jobResult}`);
   
       // 처리 결과를 제너레이터에게 전달하며 다음 yield까지 실행시킴
-      result = iterator.next(jobResult);
+      result = iterator.next(jobResult); //result.value = asyncJob들어감
+      //enxt(args)로 전달되는 인자는 제너레이터에서 멈춘 yield 표현식의 값이 됨. 
+      //즉, const result1 = yield asyncJob(10)에서 result1 = args가 됨
+      //그렇기에 첫번째 호출에서 next()는 멈춘 yield가 없기에 전달이 안된다. 
     }
   
     console.log('(Runner) 모든 Flow 완료!');
