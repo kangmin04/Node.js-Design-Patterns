@@ -8,6 +8,7 @@
   packages = [
     pkgs.nodejs #20-> 22 UPDATE
     pkgs.docker
+    pkgs.nginx
     # Added for Playwright browser dependencies
    
   ];
