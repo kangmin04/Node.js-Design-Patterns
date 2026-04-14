@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",    
+    "start:nginx": "mkdir -p chapters/chapter12_scalability/01-cluster/05-nginx/logs && nginx -p $(pwd)/chapters/chapter12_scalability/01-cluster/05-nginx/ -c nginx.conf"
+
   },
   "author": "",
   "license": "ISC",
