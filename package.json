@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js",    
+    "start": "node index.js",
     "start:nginx": "mkdir -p chapters/chapter12_scalability/01-cluster/05-nginx/logs && nginx -p $(pwd)/chapters/chapter12_scalability/01-cluster/05-nginx/ -c nginx.conf"
-
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +26,7 @@
     "nanoid": "^5.1.7",
     "openssl": "^2.0.0",
     "parallel-transform": "^1.2.0",
+    "portfinder": "^1.0.38",
     "split2": "^4.2.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",

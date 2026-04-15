@@ -9,6 +9,7 @@
     pkgs.nodejs #20-> 22 UPDATE
     pkgs.docker
     pkgs.nginx
+    pkgs.consul
     # Added for Playwright browser dependencies
    
   ];
