@@ -12,7 +12,7 @@ if (!serviceType) {
 const consulClient = new ConsulClient()
 
 const port = await portfinder.getPort()
-const address = process.env.ADDRESS || 'localhost'
+const address = process.env.ADDRESS || 'localhost' // 실제 배포시엔 서버마다 고유한 IP 존재. 
 const serviceId = randomUUID()
 
 async function registerService() {
