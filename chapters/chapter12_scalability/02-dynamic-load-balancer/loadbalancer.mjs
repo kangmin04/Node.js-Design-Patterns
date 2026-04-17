@@ -26,7 +26,7 @@ const server = createServer(async (req, res) => {
             route.index = (route.index + 1) % servers.length; 
             const server = servers[route.index]; 
             const target = `http://${server.Address}:${server.Port}`
-            proxy.web(req, res, {target})
+            proxy.web(req, res, {target}) /* req 객체를 바탕으로 target에 요청(새로운 server to server)을 보냄. target 서버가 보내는 응답을 감시하다가 응답 오면 res 객체로 내용 pipe함.  */
             return; 
         }
     }catch(err){
