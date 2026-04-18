@@ -2,7 +2,7 @@ const servers = [
     { host: 'localhost', port: 8081 },
     { host: 'localhost', port: 8082 },
   ]
-  let i = 0
+let i = 0
 
   export function balancedRequest(url, fetchOptions = {}) {
     i = (i+1) % servers.length; 

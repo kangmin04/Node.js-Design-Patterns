@@ -15,12 +15,13 @@ const routing = [
     }
 ] 
 const consulClient = new ConsulClient(); 
-const proxy =createProxyServer(); 
+const proxy = createProxyServer(); 
 
 const server = createServer(async (req, res) => {
     const route = routing.find(route => req.url.startsWith(route.path))
     try{
         const services = await consulClient.getAllServices(); 
+        console.log('Services: ', services)
         const servers = Object.values(services).filter(service => service.Tags.includes(route.service)) 
         if(servers.length > 0){
             route.index = (route.index + 1) % servers.length; 
