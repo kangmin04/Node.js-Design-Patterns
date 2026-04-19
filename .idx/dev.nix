@@ -10,8 +10,11 @@
     pkgs.docker
     pkgs.nginx
     pkgs.consul
+    #k8s
     pkgs.kind
-    # Added for Playwright browser dependencies
+    pkgs.kubectl
+    pkgs.k3d # kind doesn't work in rootless environment
+    
    
   ];
 
