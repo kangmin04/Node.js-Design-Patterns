@@ -1,0 +1,71 @@
+  ㅇ Docker architecture
+    - 도커는 client-server architecture 사용. 
+
+    도커 클라이언트 -----> 도커 데몬 ---> images, container 
+                                  ---> Registry(docekr hub)
+
+  ㅇDocker Daemon
+    - 도커데몬(dockerd)은 도커 client로 부터 Docker Api request를 받고(docker run, docker build 등), 도커데몬이 해당 명령어들 수행함. 
+    - 데몬끼리 Communicate 가능. 
+    
+  ㅇ DOcker Registry
+    - docker images 저장함. 
+    - docker hub는 public registry이며, docker pull/push등으로 이미지를 받고, 업로드도 가능하다. 
+    - centralized location for storing and sharing your container images. It can be either public or private.
+
+  ㅇ Docker Object: 
+    1. images
+        - read only template이며, docker container을 creating하는 instruction임. 
+        - onw image build : dockerfile로 define steps 후 create image and run it. 
+                            각 instruction은 layer을 만듦. 
+                            Dockerfile 수정하고, image rebuild할 경우, 변경된 layer만 rebuild됨.  -> 이미지를 lightweight, small, fast하게 가능! (기존 hyperbased VM보다)
+        - 즉 도커 이미지는 하나의 거대한 파일이 아닌, 여러 개의 얇은 읽기 전용 레이어가 겹쳐진 형태임! 
+
+    2. containers
+        - 이미지를 실행한 인스턴스(프로세스) 
+        - Docker API, CLI로 컨트롤가능(생성, 중지, 삭제 등) 
+        - 이미지 레이어는 전부 읽기 전용인데, 프로그램이 실행되는 동안 필연적으로 파일 수정이 일어남(웹서버의 경우, 접속 로그를 파일에 기록해야하고 / db의 경우엔 데이터를 파일에 써야함.)        
+          docker image 기반으로 컨테이너 생성 시 읽기 전용 이미지 레이어 위에, 읽고 쓸수있는 컨테이너 레이어를 추가헤야함! 
+          실행 중 변경사항들은 모두 이 컨테이너 레이어에 저장됨. 
+          컨테이너 삭제되면(docker rm) 해당 데이터들도 사라짐. -> 영구 저장 시엔 docker volumn이란 별도 저장공간을 연결하여 저장함. 
+
+
+[나중에 공부]
+  ㅇ Docker Networking. 
+    - 컨테이너는 격리된 공간이지만, 외부와 통신이 가능해야함. 
+
+
+  ㅇ Docker compose
+    - 웹 어플리케이션 개발 시 여러 서비스 필요함(웹서버 nodejs, 데이터베이스 PostgreSql, 캐시서버 redis 등)
+    - 각각을 개별 컨테이너로 실행한다면 ( docker run my-app, docker run db, docker run redis) 해줘야함. 
+      매우 번거롭고, 컨테이너끼리 서로 통신하도록 네트워크까지 수동설정해줘야해서 번거로움. 
+    - docker-compose.yml 파일 내에 YAML 형식으로 어플리케이션에서 사용할 모든 서비스(컨테이너), 볼륨, 네트워크 정보를 선언해둠. 
+    예시: 
+    version: '3.8' # 파일 규격 버전
+
+    services: # 여기에 실행하려는 컨테이너들을 정의합니다.
+    
+    web: # 'web'이라는 이름의 서비스 (컨테이너)
+        build: . # 현재 디렉토리의 Dockerfile을 사용해 이미지를 빌드
+        ports:
+        - "8080:3000" # 내 컴퓨터의 8080 포트를 컨테이너의 3000 포트와 연결
+        volumes:
+        - .:/app # 내 컴퓨터의 현재 폴더를 컨테이너의 /app 폴더에 연결
+        depends_on: # 'db' 서비스가 먼저 실행된 후에 실행되도록 설정
+        - db
+
+    db: # 'db'라는 이름의 서비스 (컨테이너)
+        image: postgres:15-alpine # PostgreSQL 공식 이미지를 사용
+        volumes:
+        - db-data:/var/lib/postgresql/data # 데이터 영구 저장을 위해 볼륨 연결
+        environment: # 데이터베이스에 필요한 환경 변수 설정
+        - POSTGRES_USER=user
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_DB=mydb
+
+    volumes: # 위에서 사용한 볼륨을 정의합니다.
+    db-data:
+
+
+    - docker-compose up으로 yml에서 정의된 모든 컨테이너 한번에 생성하고 실행함. 
+      docker-compose down으로 한번에 중지하고 삭제함. 

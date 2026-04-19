@@ -10,6 +10,7 @@
     pkgs.docker
     pkgs.nginx
     pkgs.consul
+    pkgs.kind
     # Added for Playwright browser dependencies
    
   ];
