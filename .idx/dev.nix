@@ -8,6 +8,7 @@
   packages = [
     pkgs.nodejs #20-> 22 UPDATE
     pkgs.docker
+    pkgs.docker-compose
     pkgs.nginx
     pkgs.consul
     #k8s
