@@ -678,3 +678,48 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
     -p 8080:8080 : 내 컴퓨터의 localhost:8080으로 들어오는 모든 네트워크 요청을 컨테이너 내부의 8080포트로 전달해줌. 
     이 옵션없다면 컨테이너는 가상 네트워크 내에서만 실행되서 외부에서 접속 불가! 
 
+
+
+  ㅇ Monolithic architecture
+    - 모놀리틱 구조라고 해서, 모듈이 없거나 모든 서비스가 연결된게아님. 
+    모듈을 가지는 구조도 있고 decoupling이 잘된 경우도있음. 
+    [ ex ] Linux OS kernel
+        : Monolithic kernel, microkernel 존재함... 
+        (Monolithic의 경우, kernel mode에서 전체 서비스 작업(프로세스 관리, 메모리 관리, 파일 시스템, 네트워크 등)이 일어남
+            장점: 서비스간 데이터 교환이나 함수 호출이 매우 빠르고 오버헤드 거의 없음. 
+            단점: 한 작업의 오류가 전체 OS down으로 이어질수있음)
+        (microkernel의 경우, only 코어 서비스(IPC, 메모리 관리)만 kernel mode에서 작업하고, 나머지(파일 시스템, 장치 드라이버 등)는 usermode에서 실행됨.
+            장점: crash나도 전체 시스템엔 영향 없음
+            단점: 유저모드에서 실행 중인 서비스가 커널의 기능 사용하거나, 다른 서비스와 통신하려면 커널 모드로 전환(컨텍스트 스위칭)과 프로세스 간 통신(IPC) 발생)
+
+
+    [ ex ] e-commerce application 의 경우, 한 어플리케이션 내에 store-frontend, admin-frontend / 서비스 모듈: products, cart, checkout, search, auth / DB
+    => 같은 codebase 내에 존재하고, 한 application으로 실행된다면 이건 Monolithic architecture이다! 
+       즉, 한 컴포넌트에서 오류 시 전체 쇼핑몰이 down 될수도있음. 
+       각 모듈 간 interdependence가 증가하고 유지보수 어려워짐. 
+
+
+
+  ㅇ Microservice architecture
+    - building large-scale Nodejs system에서 가장 중요한 건, DO NOT BUILD LARGE SCALE NODEJS SYSTEM. 
+    => scale cube의 Y-axis! (break the system down by service and functionality)
+    하나의 큰 어플리케이션이 아닌, 작고 focused components로 .. 
+
+    [ ex ] e-commerce application 의 경우, 
+    store-frontend도 하나의 application. 
+    admin-frontend도 하나의 application. 
+    product service + db
+    cart service + db
+    checkout service + db
+    auth service + db 
+    로 구성됨. 
+    => independent entity이며, own content 속 own db를 가짐. 
+    
+     db를 모든 서비스 마다 가지는걸 data ownership이라고 함. 
+     data ownership은 micro service의 큰 특징. 
+     shared db면 서비스 구현은 쉽지만, 서비스 간 coupling이 생기고 여러 application을 돌리는 것의 강점이 사라짐. 
+     
+     수정이 필요한 경우에도, 서비스 전체가 아닌ㄴ 해당 서비스만 변경하면됨 -> 간편. 
+
+     - microkernel의 challenge. 
+     
