@@ -1,0 +1,74 @@
+[
+  {
+    "userId": "307fb196-a6c3-4e1a-b89e-b6a2abbfedee",
+    "username": "Sherwood.Raynor99",
+    "email": "Bobby35@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/49.jpg",
+    "password": "YEoTrZHeo_IJLS1",
+    "birthdate": "1968-07-27T11:58:02.093Z",
+    "registeredAt": "2025-12-30T16:56:14.338Z"
+  },
+  {
+    "userId": "77549dd9-e376-422d-8789-c2b4e71c0e7b",
+    "username": "Urban.Hickle17",
+    "email": "Clara_Bashirian@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/93.jpg",
+    "password": "D3H8YbefC7utLY1",
+    "birthdate": "1967-02-25T14:21:40.922Z",
+    "registeredAt": "2025-05-03T11:32:01.559Z"
+  },
+  {
+    "userId": "b0813bf1-5975-48df-8054-ed7058f0ea55",
+    "username": "Sarah.Abbott",
+    "email": "Kirk_Feil@hotmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/30.jpg",
+    "password": "jVqXocgGh_RGk6m",
+    "birthdate": "1958-04-29T05:45:15.466Z",
+    "registeredAt": "2025-05-17T23:06:02.809Z"
+  },
+  {
+    "userId": "4232a37e-845c-4b81-9018-86c3853b8836",
+    "username": "Trudie25",
+    "email": "Rosemarie.Koch@hotmail.com",
+    "avatar": "https://avatars.githubusercontent.com/u/12628123",
+    "password": "O091bAiXJPLkv01",
+    "birthdate": "1964-09-18T20:13:18.126Z",
+    "registeredAt": "2025-04-30T16:32:11.344Z"
+  },
+  {
+    "userId": "b894a701-73c2-4099-897a-98b539165fa0",
+    "username": "Syble_Hand42",
+    "email": "Jonathan9@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/77.jpg",
+    "password": "cadpHnrHNMUQV8K",
+    "birthdate": "1981-02-22T04:28:28.365Z",
+    "registeredAt": "2026-03-02T21:26:12.112Z"
+  },
+  {
+    "userId": "8baeb7f7-e1d0-43ad-b6e3-1977e5f521c5",
+    "username": "Violet65",
+    "email": "Samara.Haley97@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/34.jpg",
+    "password": "QGFxFeL9MaKRGhG",
+    "birthdate": "2005-03-06T14:58:35.925Z",
+    "registeredAt": "2025-08-24T17:17:47.670Z"
+  },
+  {
+    "userId": "092d5c1b-f4ab-4b6e-bac3-d4fd6841e548",
+    "username": "Vesta.Gusikowski",
+    "email": "David73@hotmail.com",
+    "avatar": "https://avatars.githubusercontent.com/u/67625668",
+    "password": "GPNTLVSInXG7jMW",
+    "birthdate": "1947-11-09T03:21:47.717Z",
+    "registeredAt": "2026-03-14T15:59:22.907Z"
+  },
+  {
+    "userId": "89225658-0b9f-48bd-8fe0-bc828930d034",
+    "username": "Tiffany.Funk16",
+    "email": "Dagmar_Aufderhar@hotmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/15.jpg",
+    "password": "nRXY6b9stcuD9ru",
+    "birthdate": "1960-03-05T17:29:37.361Z",
+    "registeredAt": "2026-02-04T01:45:31.093Z"
+  }
+]

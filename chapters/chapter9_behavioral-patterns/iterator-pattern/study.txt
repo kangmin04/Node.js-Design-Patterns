@@ -29,7 +29,7 @@ function createAlphabetIterator() {
 
 이터러블(Iterable): 이터레이터를 반환하는 [Symbol.iterator] 메서드를 가진 객체를 말합니다.
 
-구현 방법: 객체 내부에 @@iterator라고 불리는 특수한 심볼 메서드인 Symbol.iterator를 구현해야 합니다.
+구현 방법: 객체 내부에 @iterator라고 불리는 특수한 심볼 메서드인 Symbol.iterator를 구현해야 합니다.
 
 class Iterable {
   //다른 메서드들 
