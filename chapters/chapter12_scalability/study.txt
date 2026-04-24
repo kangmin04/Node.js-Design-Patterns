@@ -789,6 +789,52 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
               특정 서비스가 새로 생긴다면 해당 서비스를 order_events 토픽을 구독하게 하면, 별도의 코드 수정없이 확장 가능함. 
 
 
+## Consul 헬스 체크 (Health Check) - "살아있는가?"가 아닌 "건강한가?"를 묻는 것
+    
+    - 단순히 서비스가 켜져있는지(is-alive)를 넘어, 정상적으로 요청을 처리할 수 있는 상태인지(is-healthy)를 주기적으로 검사하는 기능.
+    - 헬스 체크에 실패한 서비스는 서비스 디스커버리 결과에서 자동으로 제외되어, 장애가 발생한 인스턴스로 트래픽이 전달되는 것을 원천 차단함.
+    - 이를 통해 시스템이 스스로 장애를 감지하고 복구하는 **회복성(Resiliency)**과 **자가 치유(Self-Healing)** 능력을 갖추게 됨.
+ 
+     #### 1. 헬스 체크 등록 방법
+    - 서비스 등록 시 `Check` 객체를 포함하여 Consul Agent에게 "이 규칙대로 서비스를 감시해줘" 라고 지시함.
+Line 800:     
+Line 801:     ```json
+Line 802:     {
+Line 803:       "Name": "user-service-a-d",
+Line 804:       "ID": "user-service-a-d-instance-1",
+Line 805:       "Port": 8081,
+Line 806:       "Tags": ["user-service", "a-d"],
+Line 807:       "Check": {
+Line 808:         "HTTP": "http://localhost:8081/health",
+Line 809:         "Interval": "10s",
+Line 810:         "Timeout": "1s",
+Line 811:         "DeregisterCriticalServiceAfter": "30s"
+Line 812:       }
+Line 813:     }
+    ```
+  - **HTTP**: 체크를 수행할 API 엔드포인트.
+   - **Interval**: 체크를 수행할 주기. (예: 10초마다)
+    - **Timeout**: 응답을 기다리는 최대 시간. 이 시간 내 응답이 없으면 실패로 간주. (예: 1초)
+   - **DeregisterCriticalServiceAfter**: 서비스가 'Critical' 상태로 이 시간 이상 지속되면, 레지스트리에서 자동으로 완전히 제거함. (예: 30초)
+   
+   
+   #### 2. 상태 판정 규칙 (Convention)
+    - Consul은 HTTP 응답 코드를 기준으로 서비스의 건강 상태를 판단함. 이는 Consul과 우리 서비스 간의 약속임.
+   
+   - **`2xx` (예: 200 OK):** 정상 (Passing) - 서비스가 건강함.
+   - **`429 Too Many Requests`:** 경고 (Warning) - 서비스가 과부하 상태일 수 있음.
+   - **그 외 모든 코드 (4xx, 5xx):** 실패 (Critical) - 서비스에 문제가 발생함.
+
+   
+     #### 3. 장애 발생 시 시나리오 (자가 치유 과정)
+   
+1.  **장애 발생:** 8081번 포트의 서비스에 내부 오류가 발생하여 `/health` 요청에 `500` 에러를 응답하기 시작.
+ 2.  **실패 감지:** Consul 에이전트가 10초 주기 체크 중 `500` 응답을 받음.
+3.  **상태 변경:** Consul은 즉시 `user-service-a-d-instance-1` 서비스의 상태를 **'Critical'**로 변경함.
+4.  **트래픽 중단:** 이 순간부터 API 오케스트레이터가 Consul에 서비스를 문의하면, Consul은 'Critical' 상태인 8081번 인스턴스를 결과에서 제외하고 응답함. -> **장애 전파 차단!**
+5.  **자동 제거:** `DeregisterCriticalServiceAfter`에 설정된 30초 동안 서비스가 복구되지 못하면(계속 'Critical' 상태이면), Consul은 해당 서비스를 레지스트리에서 **완전히 삭제**함.
+
+=> 이 모든 과정이 관리자의 개입 없이 자동으로 이루어지며, 시스템 전체의 안정성을 크게 향상시킴.
 
 
 
