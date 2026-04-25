@@ -1,4 +1,7 @@
 export class ConsulClient {
+  /* consul의 기본 HTTP API 포트는 항상 8500임
+    다른 포트 주소로 하면 ECONNREFUSED 에러 뜸, 
+  */
     constructor(baseUrl = 'http://localhost:8500') {
       this.baseUrl = baseUrl
     }
@@ -15,6 +18,13 @@ export class ConsulClient {
         Port: port,
         // biome-ignore lint/style/useNamingConvention: Consul API
         Tags: tags,
+        /* health check로직 설정 */
+        Check : {
+          HTTP: `http://${address}:${port}/health`,
+          Interval: "10s",
+          Timeout: "3s",
+          DeregisterCriticalServiceAfter: "30s"
+        }
       }
   
       const response = await fetch(url, {

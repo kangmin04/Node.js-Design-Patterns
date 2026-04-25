@@ -1,0 +1,92 @@
+[
+  {
+    "userId": "7c38c73a-91fb-4feb-8855-2312150a58a6",
+    "username": "Dorothy7",
+    "email": "Samara.OKon@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/72.jpg",
+    "password": "cCYQ4Plr7PFzmK7",
+    "birthdate": "1949-05-07T16:48:33.355Z",
+    "registeredAt": "2025-11-20T14:45:26.572Z"
+  },
+  {
+    "userId": "7eb44947-2921-4743-8aa4-66a856884606",
+    "username": "Donnie.Goldner26",
+    "email": "Laurie_Prosacco27@hotmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/33.jpg",
+    "password": "IZrJNnRS_dzcGrL",
+    "birthdate": "1996-04-28T14:36:49.807Z",
+    "registeredAt": "2025-08-04T02:44:53.590Z"
+  },
+  {
+    "userId": "75aea3cd-098c-4294-9631-6a49c7427ffe",
+    "username": "Berniece54",
+    "email": "Mervin_Funk80@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/36.jpg",
+    "password": "LCF0zXQQzJbq6KW",
+    "birthdate": "1968-03-29T15:53:33.969Z",
+    "registeredAt": "2025-06-09T04:18:32.829Z"
+  },
+  {
+    "userId": "953ea934-63b3-4cdd-a930-13baff3a8165",
+    "username": "Denis.McKenzie55",
+    "email": "Priscilla.Bernhard@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/73.jpg",
+    "password": "jqShPaVScXbb0_h",
+    "birthdate": "1995-02-09T10:48:46.181Z",
+    "registeredAt": "2025-08-12T11:35:15.040Z"
+  },
+  {
+    "userId": "2b909f84-fd3b-42e2-831a-48253c71f3b9",
+    "username": "Claudia38",
+    "email": "Dawn.Fadel22@gmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/47.jpg",
+    "password": "0mFUy3E3RNucvmr",
+    "birthdate": "1983-10-11T09:29:54.876Z",
+    "registeredAt": "2025-04-30T11:20:07.006Z"
+  },
+  {
+    "userId": "7750c84f-f0ab-4281-87de-5f8f619d5c48",
+    "username": "Ahmed66",
+    "email": "Mertie.Ward@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/10.jpg",
+    "password": "_BG9ud69MozqgX_",
+    "birthdate": "2000-04-27T01:29:27.059Z",
+    "registeredAt": "2025-11-02T10:25:54.628Z"
+  },
+  {
+    "userId": "86e8ba0c-a617-44b9-a010-c0e1488bade6",
+    "username": "Dudley_Hickle",
+    "email": "Lloyd_Streich8@gmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/39.jpg",
+    "password": "SIh8K1Nm8kR38hX",
+    "birthdate": "1980-08-17T20:01:43.489Z",
+    "registeredAt": "2025-09-05T09:58:57.552Z"
+  },
+  {
+    "userId": "54aa1e5d-bedb-400d-a852-22ca713d12e3",
+    "username": "Devan.Hudson",
+    "email": "Curtis_Erdman@yahoo.com",
+    "avatar": "https://avatars.githubusercontent.com/u/16879550",
+    "password": "wqY5Gq6Lc6ivhoJ",
+    "birthdate": "1950-02-12T07:47:45.547Z",
+    "registeredAt": "2026-03-25T05:04:08.799Z"
+  },
+  {
+    "userId": "e067d723-8312-4d89-9ddc-955643cbc36b",
+    "username": "Braden26",
+    "email": "Jake.Ondricka@gmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/56.jpg",
+    "password": "4wSet9wp6fWL90j",
+    "birthdate": "1968-10-21T17:20:54.683Z",
+    "registeredAt": "2025-05-15T22:52:56.817Z"
+  },
+  {
+    "userId": "ca8888a6-7854-4b61-8039-52978f142690",
+    "username": "Cory_Wilkinson-Kuhlman56",
+    "email": "Paulette.Rau@gmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/8.jpg",
+    "password": "QQWixcCC8eobA_F",
+    "birthdate": "1976-03-10T10:40:40.101Z",
+    "registeredAt": "2025-12-30T23:22:40.331Z"
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "userId": "4ca4e0f3-46f1-4344-a1c8-a17289e53cbe",
+    "username": "Ramiro78",
+    "email": "Karianne_Feest3@gmail.com",
+    "avatar": "https://avatars.githubusercontent.com/u/39149393",
+    "password": "LQdxUxi93Riv1Yf",
+    "birthdate": "1949-08-11T19:53:18.118Z",
+    "registeredAt": "2026-03-19T18:12:25.825Z"
+  },
+  {
+    "userId": "d67abd23-e578-4b93-9272-e0db0ebe65d7",
+    "username": "Sherry_Stark",
+    "email": "Susana.Ondricka-Wisozk@yahoo.com",
+    "avatar": "https://avatars.githubusercontent.com/u/89625485",
+    "password": "rteccDXibTV6flJ",
+    "birthdate": "2001-07-07T15:27:06.387Z",
+    "registeredAt": "2026-04-20T22:54:01.877Z"
+  },
+  {
+    "userId": "fd5f0809-7972-412f-b6cb-d00c52ad652d",
+    "username": "Sandrine.Barrows85",
+    "email": "Arely60@yahoo.com",
+    "avatar": "https://avatars.githubusercontent.com/u/38251195",
+    "password": "Y3OTxeFY_Nq3gTV",
+    "birthdate": "1975-12-24T17:33:23.631Z",
+    "registeredAt": "2025-10-09T05:14:05.175Z"
+  },
+  {
+    "userId": "8f1fe71b-350c-4bc5-b14e-bef0f45bc8ef",
+    "username": "Rick_Hodkiewicz97",
+    "email": "Russell.Cassin-Wilderman4@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/67.jpg",
+    "password": "_BNbLaq7EwSduAZ",
+    "birthdate": "1949-07-01T19:40:57.615Z",
+    "registeredAt": "2025-09-13T02:10:43.888Z"
+  },
+  {
+    "userId": "a922590b-8626-4f98-b52f-91f1ce2bcf0b",
+    "username": "Wm94",
+    "email": "Octavia47@gmail.com",
+    "avatar": "https://avatars.githubusercontent.com/u/76224770",
+    "password": "Gri0PtvnRvotc_3",
+    "birthdate": "1978-10-17T11:09:16.083Z",
+    "registeredAt": "2025-07-10T23:53:45.312Z"
+  },
+  {
+    "userId": "1b247cf6-80d9-460c-b9d3-4b103fac3722",
+    "username": "Rae8",
+    "email": "Clyde62@hotmail.com",
+    "avatar": "https://avatars.githubusercontent.com/u/64426712",
+    "password": "T1_T6MG3LkPGVAz",
+    "birthdate": "1972-09-24T16:06:28.297Z",
+    "registeredAt": "2025-07-26T12:09:57.163Z"
+  },
+  {
+    "userId": "7b0d64e4-7f18-45fd-9503-aa3a30111476",
+    "username": "Theodora_Mraz",
+    "email": "Floyd.Streich@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/56.jpg",
+    "password": "sEglMw3pJo7KVXb",
+    "birthdate": "1952-05-09T18:58:26.603Z",
+    "registeredAt": "2025-11-17T20:46:50.546Z"
+  },
+  {
+    "userId": "a0faaca1-3e76-43d9-a11b-2321fbefa129",
+    "username": "Wilfrid.Schiller",
+    "email": "Emil.Yost92@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/6.jpg",
+    "password": "TeUiNk7mzwBE2Y2",
+    "birthdate": "2005-03-25T12:48:51.919Z",
+    "registeredAt": "2025-05-14T21:34:44.837Z"
+  },
+  {
+    "userId": "0a25e68a-966a-4270-abc1-8da0b6aff912",
+    "username": "Wendell23",
+    "email": "Dianna80@yahoo.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/82.jpg",
+    "password": "jJZ4vXiYAU97sMs",
+    "birthdate": "1963-01-31T05:48:45.706Z",
+    "registeredAt": "2025-12-10T13:52:02.181Z"
+  },
+  {
+    "userId": "96c9fbcc-9142-48b2-bf18-f207009b3965",
+    "username": "Randall_Hills52",
+    "email": "Zetta.Kshlerin@hotmail.com",
+    "avatar": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/3.jpg",
+    "password": "NqOFF3AnPSFtjdg",
+    "birthdate": "1976-06-08T23:19:23.884Z",
+    "registeredAt": "2025-12-08T05:26:15.626Z"
+  },
+  {
+    "userId": "992cd434-5117-4033-8f96-c8f60c5e0f96",
+    "username": "Saul.Kovacek44",
+    "email": "Domenic84@yahoo.com",
+    "avatar": "https://avatars.githubusercontent.com/u/16296368",
+    "password": "nL5bXRJScDKghbj",
+    "birthdate": "2006-07-22T20:52:24.453Z",
+    "registeredAt": "2025-07-02T00:52:53.750Z"
+  }
+]
