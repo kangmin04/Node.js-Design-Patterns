@@ -842,8 +842,10 @@ Line 813:     }
     1. LOGGING / MONITOR (winston, pino)
         - 요청, 응답에 대한 정보 남김. (요청수, 평균 응답시간, 에러율 등의 metric) -> 전체 시스템의 상태를 한눈에 파악 + 문제 발생시 원인 신속하게 추적가능
         => winston. 
-        - 로그를 여러 곳에 저장 가능 (Console, File, HTTP, Database)
-        로그의 심각도를 단계별로 나눌수있음 
+            - 로그를 여러 곳에 저장 가능 (Console, File, HTTP, Database)
+            - 로그의 심각도를 단계별로 나눌수있음 
+            -------------------------------------------
+           
     2. Error Handling / Resilence (opossum)
         - 특정 백엔드 인스턴스 서버 다운 시, 해당 서버로 요청 보내는걸 일시 중단하여, 하나의 장애가 전체 장애로 번지는 Casacading Failure 방지! 
         => circuit breaker pattern
@@ -855,6 +857,92 @@ Line 813:     }
           반면 opossum은 일정 시간 회로 끊은 후 다시 요청 보냄. 성공하면 CLOSED로 상태 변경 후 정상작동함
 
         - 서킷브레이커는 API orchestrator인 LB에구현되어야함. 만약 요청보낸 a-d가 작동안할경우, api에서 관리할것이기에!  
+
+
+
+
+  ㅇ winston
+    - 로그하면 좋은 것 추가 : 
+        1. 성공한 요청들에 대해서도 + 얼마나 걸렸는지 로그! 
+        2. 요청 시작 시 로그 (incoming req)
+        3. 프록시 된 응답의 경우, proxyres 이벤트를 사용하여 프록시 응답 시 로그하자! 
+        4. 기타 에러들(logger.warn, logger.error)
+            에러 시 두번째 인자로 req.url, req.ip 등 자세하게 기록하자! 
+
+    - 예시. 
+            const logger = winston.createLogger({
+                // 'info' 레벨 이상의 로그만 기록합니다 (info, warn, error)
+                level: 'info',
+                
+                format: combine(
+                    colorize(), // 로그 레벨에 따라 색상 적용
+                    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), // 시간 자동 기록
+                    logFormat // 위에서 정의한 포맷 사용
+                ),
+                // 모든 로그에 'load-balancer'라는 서비스 이름을 기본으로 추가합니다.
+                defaultMeta: { service: 'load-balancer' },
+                // 로그를 어디에 저장할지 설정합니다.
+                transports: [
+                    new winston.transports.Console()
+                    // 필요하다면 파일로도 저장할 수 있습니다.
+                    // new winston.transports.File({ filename: 'error.log', level: 'error' }),
+                    // new winston.transports.File({ filename: 'combined.log' })
+                ]
+            })
+            ---------------------------------------------
+            이후 logger 모듈 import 하여 logger.info(message, 속성). 
+            1단계: 초기 info 객체 생성 winston은 먼저 info라는 기본 객체를 만듭니다. logger.info의 첫 번째 인자는 message가 되고, 두 번째 객체 인자의 속성들은 그대로 info 객체에 합쳐집니다.
+
+            // 최초 생성된 info 객체
+            {
+            level: 'info',
+            message: 'Request successful',
+            durationMs: 150
+            }
+
+
+            2단계: defaultMeta 병합 createLogger에 설정된 defaultMeta: { service: 'load-balancer' }가 이 객체에 자동으로 합쳐집니다.
+
+            // defaultMeta 병합 후
+            {
+            level: 'info',
+            message: 'Request successful',
+            durationMs: 150,
+            service: 'load-balancer' // <--- 추가됨
+            }
+
+
+            3단계: combine 조립 라인 통과 이 객체는 combine에 정의된 포맷 함수들을 순서대로 통과합니다.
+
+            colorize() 통과: level 값('info')에 색상 코드를 입힙니다.
+            timestamp() 통과: timestamp 속성을 새로 만들어 추가합니다.
+            // timestamp 통과 후
+            {
+            level: '\x1B[32minfo\x1B[39m', // 색상 코드가 입혀진 level ]]
+            message: 'Request successful',
+            durationMs: 150,
+            service: 'load-balancer',
+            timestamp: '2023-10-27 17:00:00' // <--- 추가됨
+            }
+
+
+            4단계: 최종 목적지, printf 함수 이렇게 완성된 info 객체 하나가 logFormat의 printf 콜백 함수에 단일 인자로 전달됩니다.
+
+            // logFormat의 printf(info => { ... }) 로 전달되는 최종 info 객체
+            const info = {
+            level: '\x1B[32minfo\x1B[39m',           // ]]
+            message: 'Request successful',
+            durationMs: 150,
+            service: 'load-balancer',
+            timestamp: '2023-10-27 17:00:00'
+            }
+
+    - Node.js의 req(http.IncomingMessage)와 res(http.ServerResponse) 객체는 매우 복잡하며, 내부에 자기 자신이나 서로를 참조하는 순환 구조를 가짐
+     예를 들어, req.socket 객체는 req 객체를 다시 참조할 수 있습니다.
+     res 객체도 내부적으로 req 객체와 연결되어 있습니다.
+      => Converting circular structure to JSON이라는 에러를 발생시키며 프로세스가 멈추게 됩니다. 
+      (console.log의 경우, 순환 참조 시 [circular] 등의 텍스트로 표시하기에 에러 안남)
+      => 해결책 req, res 전체 로깅이 아닌, 필요한 정보만 뽑아서 로깅 !! (req.method, req.url 등 .. )
 
 
 여담.. 

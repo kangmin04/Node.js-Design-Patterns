@@ -20,7 +20,9 @@ proxy.on('error', (err, req, res) => {
     }
     res.end(JSON.stringify({ error: 'Bad Gateway', message: 'Could not connect to the backend service.' }));
 });
-/* logger용 응답 시간 계산 함수 */
+/* logger용 응답 시간 계산 함수
+    process.hrtime.bigint() 시 일반 숫자로나옴. 
+*/
 function getDurationInMs (startTime) {
     const [sec, nano] = process.hrtime(startTime)
     return (sec * 1000) + (nano / 1000000)
@@ -39,8 +41,8 @@ function selectGroupByLetter(letter){
 
 //req : curl localhost:8080/api/people/byFirstName/{letter}
 const server = createServer(async (req, res) => {
-    const startTime = process.hrtime();
-    logger.info('startTime: ', startTime)
+    const startTime = process.hrtime.bigint();
+    // logger.info('startTime: ', startTime)
     logger.info(`Incoming request`, { method: req.method, url: req.url, ip: req.socket.remoteAddress });    
     /* Incoming하는 요청들에 대해서도 log를 남겨두자 !!  요청의 시작점 파악 가능 */
     try{
@@ -63,7 +65,7 @@ const server = createServer(async (req, res) => {
         const group = selectGroupByLetter(letter); 
         const server = Object.values(services).find(service => service.Tags.includes(group))
 
-        logger.info(`Forwarding request to service`, { service: server.ID, address: server.address, port: server.port, group });
+        logger.info(`Forwarding request to service`, { service: server.Tags, address: server.address, port: server.port, group });
         
         if (server.Port === port) {
             logger.error(`CRITICAL: Infinite loop detected! Service ${server.ID} is registered on the load balancer's port.`);
@@ -73,6 +75,9 @@ const server = createServer(async (req, res) => {
 
         const target = `http://${server.Address}:${server.Port}`
         proxy.web(req,res,{target})
+        // const endTime = process.hrtime.bigint()
+        // const duration = endTime - startTime ; 
+        // logger.info('duration time', duration)
         return; 
     }catch(err){
         const durationInMs = getDurationInMs(startTime);
@@ -86,8 +91,10 @@ const server = createServer(async (req, res) => {
     }
 })
 
-// 백엔드에서 응답이 왔을 때 발생하는 이벤트
+// emitted when the target server (the backend) sends a response back to the proxy
 proxy.on('proxyRes', (proxyRes, req, res) => {
+    // logger.info('proxyres의 req', req)
+    // logger.info('proxyres의 res', res)
     // 응답이 클라이언트에게 완전히 전송되었을 때 로그를 남기기 위해 'finish' 이벤트를 사용
     res.on('finish', () => {
         // res에서 startTime을 가져오려면 req 객체에 저장해두는 트릭을 사용할 수 있습니다.
