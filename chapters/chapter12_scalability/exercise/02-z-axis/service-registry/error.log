@@ -1,0 +1,2 @@
+2026-04-26 14:47:11 [load-balancer] [31merror[39m: Not Found: Invalid API endpoint {"url":"/api/people/byFi/a"}
+2026-04-26 14:47:29 [load-balancer] [31merror[39m: Not Found: Invalid API endpoint {"url":"/api/people/byFi/vf"}

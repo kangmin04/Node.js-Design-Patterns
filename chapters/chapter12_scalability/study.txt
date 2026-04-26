@@ -838,8 +838,23 @@ Line 813:     }
 
 
 
+  ㅇ API orchestrator 추가 구현
+    1. LOGGING / MONITOR (winston, pino)
+        - 요청, 응답에 대한 정보 남김. (요청수, 평균 응답시간, 에러율 등의 metric) -> 전체 시스템의 상태를 한눈에 파악 + 문제 발생시 원인 신속하게 추적가능
+        => winston. 
+        - 로그를 여러 곳에 저장 가능 (Console, File, HTTP, Database)
+        로그의 심각도를 단계별로 나눌수있음 
+    2. Error Handling / Resilence (opossum)
+        - 특정 백엔드 인스턴스 서버 다운 시, 해당 서버로 요청 보내는걸 일시 중단하여, 하나의 장애가 전체 장애로 번지는 Casacading Failure 방지! 
+        => circuit breaker pattern
+        - 처음엔 consul의 health check기능이 있는데 굳이 왜 필요하나 생각했다. 
+          그러나 opossum은 외부 서비스 호출로 인해, 클라이언트가 장애를 겪지않는것이 목적. 
+          실패가 임계치 넘으면 추가 요청없이, 즉시 실패 시켜 내 어플리케이션의 리소스를 보호하고 응닶시간 단축함. 
+          또한, 서킷 브레이커는 서버의 품질저하도 캐치 가능(네트워크 지연 혹은 과부하로 서버가 느려진 경우, consul은 health를 반환하지만, 서킷은 일정 timeout 초과 시 실패로 간주함)
+          consul은 서비스 계속 비정상이면 파괴하고, 서비스 복구 시 스스로 re-register 해야함. 일시적 장애 상황보단 영구적으로 종료한 상황이 발생한 경우 더 유리함. 
+          반면 opossum은 일정 시간 회로 끊은 후 다시 요청 보냄. 성공하면 CLOSED로 상태 변경 후 정상작동함
 
-
+        - 서킷브레이커는 API orchestrator인 LB에구현되어야함. 만약 요청보낸 a-d가 작동안할경우, api에서 관리할것이기에!  
 
 
 여담.. 
