@@ -1,0 +1,10 @@
+1. Command pattern and Strategy pattern difference? 
+    ①커맨드 패턴(Command Pattern): 
+        - 액션(요청) 자체를 객체로 캡슐화
+        - 목적: "요청"을 객체로 포장하는것. -> 덕분에 요청 자체를 큐어 쌓거나, 로그 남기거나, 취소 작업이 가능해짐 
+            (뭘 할지를 객체로 만들어서 요청 자체를 유연하게 다룰 때)
+    ②전략 패턴(Strategy Pattern):
+        - **알고리즘(수행 방식)**을 객체로 캡슐화
+        - 목적: 알고리즘 교체! 
+        [ ex: 서울 -> 부산 가야하는 경우...... Ktxstrategy, Busstrategy, AirplaneStrategy 존재. 각 방법들이 캡슐화되어있고, 필요에 따라 setStrategy를 호출하여 변경 가능.]
+        
