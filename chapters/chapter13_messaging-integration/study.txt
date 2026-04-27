@@ -1,0 +1,69 @@
+
+1. Messaging and integration pattern의 필요성 
+    - 12챕터에서 MSA(split application across multiple processes and machines) 배움, 
+    서로 Communicate 필요할 때 있음 !! 
+    -> 1. shared storage 사용하거나 2. message exchange하는 방식 존재 
+    - messaging은 분산 시스템에서 scalability 및 flexibility에 대해 상당히 유용함. 
+    - messaging구현은 broker, p2p, one-way OR request/reply, queues 등으로 가능 ! 
+
+
+2. Fundamental of message system
+    - direction of Communication (one-way OR request/reply)
+        ① one-way : webserver이 연결된 브라우저에서 message 보내는 행위, system이 workers에게 task distribute하는 것 
+        ② request/reply: db에 쿼리 보내는 것. (Communication channel이 async하거나, multiple nodes 대상으로 할 경우 복잡해짐 !)
+    - purpose of message (message type)
+        ① Command Message (명령 메시지)
+            - 의미: 수신자에게 "특정한 행동을 수행하라"고 지시하는 메시지입니다.
+            - 성격: 의도(Intent) 중심입니다.
+            - 특징:
+                요청자가 수신자가 무엇을 해야 하는지(어떤 작업을 수행해야 하는지)를 명확히 알고 있습니다.
+
+                보통 1:1 통신(한 명의 수신자)을 전제
+
+                명령이 실패할 경우, 호출자는 에러 응답을 기대하거나 재시도를 고려해야 함
+
+            - 예: CreateOrder, SendEmail, DeleteUser. + REST API에서 GET, PUT 등의 명렁어들, Remote Procedure Call 
+
+        ② Event Message (이벤트 메시지)
+            - 의미: 시스템 내에서 "이미 발생한 사실(Fact)"을 알리는 메시지
+            - 성격: 결과(Past Tense) 중심입니다.
+            - 특징:
+                과거에 일어난 일을 알리는 것이므로 '상태 변경'에 대한 통지입니다.
+                발행자는 누가 이 이벤트를 처리할지, 몇 개의 서비스가 처리할지 관심이 없습니다(결합도 극단적 감소).
+            - 예: OrderCreated, EmailSent, UserDeleted. + chat 앱에서 누가 어떤 channel로 메세지 보냈는지 이벤트 발생시키고, connected된 user들에게 broadcast됨
+
+        ③ Document Message (문서 메시지)
+            - 의미: 시스템 간에 "데이터의 상태(State) 자체"를 전달하는 메시지입니다.
+            - 성격: 데이터(State) 중심입니다.
+            - 특징:
+                상태의 최신 정보(Snapshot)를 전달하여 수신자가 자신의 데이터를 동기화하도록 돕습니다.
+                수신자는 이 문서를 바탕으로 자신의 로직을 수행할지 말지 결정합니다. 
+                No instruction attached.. 
+            - 예: ProductCatalogUpdated (변경된 상품 상세 정보 전체 전달), UserAccountDetails (사용자 변경 정보 전체 전달).
+    - timeing of message (sync, async)
+    - delivery of message ( directly OR via broker)
+
+3. semantics of Communication channel
+    ① Pull delivery(consumer이 data request보냄.)
+        - consumer이 언제 data fetch할지 control 가능. -> producer side의 complexity 줄여줌. 
+        - pros: 
+            ⓐ simpler, debug쉽고, resource usage를 더 predictable하게끔 함. 
+            ⓑ cost effective
+        - cons: 
+            ⓐ adds delay, frequent polling으로 인해 서버 부하 증가 등. 
+        - 예시: 
+            1. 브라우저가 서버에 웹 페이지 필요할 때 요청 
+            2. 서버가 필요할 때 db에 쿼리 보냄    
+    ② push delivery(producer이 data를 proactively하게 보냄)
+        - consumer의 요청 기다림 없이, real time으로 전달됨. 
+        - pros: 
+            ⓐ information이 consumer에게 immediately하게 전달되어야 할 때 유용 ! (chat, 실시간 가격 등)
+            ⓑ low latency 
+        - cons: 
+            ⓐ connection관리 , 재시도, backpressure 등에 대해 복잡성을 추가하고, resource-intensive 하게 함.. 
+
+
+    => 많은 시스템에선 hybrid로 함! 
+    (long polling, push Notification 등.. )
+
+
