@@ -63,7 +63,49 @@
             ⓐ connection관리 , 재시도, backpressure 등에 대해 복잡성을 추가하고, resource-intensive 하게 함.. 
 
 
-    => 많은 시스템에선 hybrid로 함! 
+    => 많은 시스템에선 hybrid로 함!  
     (long polling, push Notification 등.. )
 
 
+4. sync message / async message
+    - sync message: 
+        - tight coupling. 
+        - participant 둘다 동시에 connected이며 하나가 끊어지면 나머ㅓ지도 끊어짐. 
+    - async message: 
+        - decoupling. (sender, receiver은 서로 동시에 available 할 필요 없으며 message는 저장됐다가 receiver이 ready된 경우 deliver함.)
+        - 구현 방법: 
+            ⓐ MQ(Message Queue) 
+                - consumer busy, disconnected, crashed 등의 경우 queue가 message accept하고 store함. 
+                  consumer이 online일 경우, 받은순서대로 consumer에게 보냄 
+                - queue는 producer side에서 p2p 형식으로도 가능하고, 혹은 third-party인 message broker에서 조절될수도 있음
+            ⓑ log OR stream
+                - queue와 비슷한 목적이지만, trade-off존재. 
+                - stream은 append-only이며, consumer이 read 가능, 
+                - 차이 
+                    1. Queue는 메세지가 한번 consumed되면 사라지지만, stream에선 processed 이후에도 accessible 함! go back하여 historical data read 가능
+                    2. queue는 주로 point to point방식으로 한 consumer 대상으로 message 전달함. Stream은 multi-subscriber 대상. 여러 consumers이 independently로 같은 msg read 가능. 
+                    = > stream은 같은 이벤트에 대해 multi-components들이 대응 가능함. 
+
+5. nodes들 간 연결! (last element to consider in messaging system)
+    ① peer-to-peer
+        - 모든 노드들이 서로의 receiver의 port, address를 알아야함. 
+          또한 프로토콜과 message format에 대한 동의가 있어야함
+            ⓐ 프로토콜: 
+                - 메시지 형식 (Data Format): 메시지를 어떤 구조로 보낼 것인가? (예: JSON, XML, 직접 정의한 바이너리 형식 등)
+                - 전송 방식 (Transport): 어떤 기술을 사용해 네트워크로 메시지를 보낼 것인가? (예: 단순 TCP/IP 소켓, HTTP 요청, UDP 등)
+                - 메시지 의미 (Semantics): 특정 메시지가 어떤 동작을 의미하는가? (예: 'CREATE_USER'라는 문자열을 받으면 사용자 생성 작업을 수행)
+                - 에러 처리 및 보장 수준 (Error Handling): 메시지 전송 실패 시 어떻게 할 것인가? (재시도? 무시?), 메시지를 받았다는 응답(ACK)을 보낼 것인가?
+                - 서비스 탐색 (Discovery): 통신할 상대방의 주소(IP, Port)를 어떻게 찾을 것인가?
+    ②broker 
+        - p2p 방식의 복잡함을 제거함! 
+        - 모든 node는 independent하고, 서로의 정보를 모른채로 여러 peer과 communicate 가능. 
+        - protocol또한 표준 프로토콜 중에 선택하면 됨. p2p처럼 직접 구현할 필요 없음. 
+            ⓐAMQP (Advanced Message Queuing Protocol):
+                특징: 신뢰성 높은 메시징을 위한 '고급' 프로토콜. 복잡한 라우팅 규칙, 트랜잭션 등 엔터프라이즈급 기능을 많이 제공
+                주요 사용처: 금융 시스템, 안정적인 백엔드 서비스 간 통신 (주로 RabbitMQ 브로커가 사용)
+            ⓑMQTT (Message Queuing Telemetry Transport):
+                특징: 매우 가볍고(Lightweight) 단순한 발행/구독(Pub/Sub) 모델의 프로토콜. 적은 전력과 낮은 네트워크 대역폭을 사용하도록 설계되었습니다.
+                주요 사용처: IoT 기기, 모바일 앱 푸시 알림 등 리소스가 제한적인 환경
+            ⓒSTOMP (Simple/Streaming Text Orientated Messaging Protocol):
+                특징: 이름처럼 매우 간단한 텍스트 기반 프로토콜. HTTP와 유사한 형태로 동작하여 어떤 언어로든 클라이언트를 만들기 쉽습니다.
+                주요 사용처: 웹소켓(WebSocket)을 통한 실시간 웹 애플리케이션, 간단한 메시징 연동
