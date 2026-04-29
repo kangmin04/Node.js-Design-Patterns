@@ -28,11 +28,14 @@
     "openssl": "^2.0.0",
     "parallel-transform": "^1.2.0",
     "portfinder": "^1.0.38",
+    "serve-handler": "^6.1.7",
     "split2": "^4.2.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "undici": "^7.22.0",
-    "winston": "^3.19.0"
+    "websocket": "^1.0.35",
+    "winston": "^3.19.0",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",

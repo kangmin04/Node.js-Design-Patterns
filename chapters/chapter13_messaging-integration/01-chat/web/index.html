@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="chat-container">
+      <div id="messages" class="chat-messages"></div>
+      <form id="msgForm" class="chat-form">
+        <input
+          id="msgBox"
+          type="text"
+          placeholder="Enter your message"
+          autocomplete="off"
+        />
+        <button id="sendButton" type="submit">Send</button>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const messagesArea = document.getElementById("messages")
+        const messageInput = document.getElementById("msgBox")
+        const sendButton = document.getElementById("sendButton")
+        const form = document.getElementById("msgForm")
+
+        // WebSocket connection
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const ws = new WebSocket(`${wsProtocol}://${window.document.location.host}`);
+        console.log(`서버 주소 : ${wsProtocol}://${window.document.location.host}`)
+        
+        // Receive messages from WebSocket
+        ws.onmessage = async function (message) {
+          const content = await message.data.text()
+
+          // Create received message element
+          /* 
+              innerHTML이 아닌, textContent로 incoming message 수정하는 이유: 
+              HTML 변경 시 malicious script가 실행될 수 있음. XSS 방지위해서 ! 
+          */
+          const messageDiv = document.createElement("div")
+          messageDiv.className = "message received"
+          const messageContent = document.createElement("div")
+          messageContent.className = "message-content"
+          messageContent.textContent = content
+          messageDiv.appendChild(messageContent)
+          messagesArea.appendChild(messageDiv)
+          messagesArea.scrollTop = messagesArea.scrollHeight; // Scroll to the bottom
+        }
+
+        // Send message to WebSocket
+        function sendMessage() {
+          if (messageInput.value.trim() !== "") {
+            ws.send(messageInput.value)
+
+            // Create sent message element
+            const messageDiv = document.createElement("div")
+            messageDiv.className = "message sent"
+            const messageContent = document.createElement("div")
+            messageContent.className = "message-content"
+            messageContent.textContent = messageInput.value
+            messageDiv.appendChild(messageContent)
+            messagesArea.appendChild(messageDiv)
+            messagesArea.scrollTop = messagesArea.scrollHeight; // Scroll to the bottom
+
+            messageInput.value = ""
+          }
+        }
+
+        // Event listeners
+        form.addEventListener("submit", function (e) {
+          e.preventDefault()
+          sendMessage()
+        })
+
+        sendButton.addEventListener("click", function (e) {
+          e.preventDefault()
+          sendMessage()
+        })
+      })
+    </script>
+  </body>
+</html>
