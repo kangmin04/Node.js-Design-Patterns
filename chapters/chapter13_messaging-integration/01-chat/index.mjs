@@ -24,7 +24,7 @@ function broadcast(msg){
         }
     }
 }
-
-server.listen(process.argv[2] || 8080, () => {
-    console.log(`Server is on http://localhost:8080`)
+const port = process.argv[2] || 8080
+server.listen(port, () => {
+    console.log(`Server is on http://localhost:${port}`)
 })
