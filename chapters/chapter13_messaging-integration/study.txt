@@ -217,3 +217,17 @@ WebSocket 이전의 보완 기술들:
 ⓐ polling: 클라이언트가 일정한 간격으로 (예: 매 2초마다) 서버에 계속해서 "새로운 소식 없어?" 라고 물어보는 방식 -> 대부분은 새 소식없다는 의미없는 빈 응답
 ⓑ long-polling
 
+
+
+
+
+
+
+
+
+8. docker로 redis 시작하기! 
+    1. docker run -it -p 6379:6379 redis redis-server로 docker hub에서 redis 공식 이미지 찾음.
+    2. docker은 redis 이미지 토대로 컨테이너 생성 및 실행 (이 컨테이너엔 redis 서버가 이미 설치되어있음)
+    3. 이후 index.mjs 8080으로 node 서버 실행하면,  new Redis()코드로 인해 localhost:6379로 연결을 시도함. 도커 포워딩(-p)로 컨테이너 내부의 redis 서버에 연결됨. 
+
+    - 현재는 volumn이 없는 ephemoral한 상황. 
