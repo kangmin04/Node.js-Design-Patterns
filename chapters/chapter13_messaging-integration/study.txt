@@ -261,7 +261,7 @@ WebSocket 이전의 보완 기술들:
         - 장점:
             - 완벽한 분리(Decoupling): Producer와 Consumer는 서로를 전혀 몰라도 되며, 심지어 동시에 온라인 상태일 필요도 없습니다. Broker가 메시지를 안전하게 보관해줍니다. (line 75, 78 참고)
             - 데이터 보장(Durability): Broker가 메시지를 저장하므로 안정적인 전달을 보장합니다.
-            - 관리 용이성: 모든 메시지 흐름이 중앙 브로커를 통하므로 모니터링과 관리가 쉽습니다.
+            - 관리 용이성: 모든 메https://studio.firebase.google.com/u/1/node-design-system-81022038시지 흐름이 중앙 브로커를 통하므로 모니터링과 관리가 쉽습니다.
         - 단점:
             - 성능/지연: 모든 메시지가 브로커를 거치므로 Brokerless 방식보다 느릴 수 있습니다.
             - 단일 장애점(SPOF): 브로커에 장애가 발생하면 전체 시스템이 마비될 수 있습니다. (이를 막기 위해 클러스터링 구성이 필요하며 운영 복잡도가 증가합니다.)
@@ -280,5 +280,120 @@ WebSocket 이전의 보완 기술들:
 
 
 
+    - MOM(Message Oriented Middleware): 메세지 지향 미들웨어 
+        장점: 
+            클라이언트 시스템 사이에서 메시지 통신을 중간에서 관리하여 종속성, 결속성 낮춤. 
+            안정성 - 메시지 db에 기록하는 등 백업 가능. (수신서버거 꺼져있어도 메시지는 미들웨어에 보관됨)
+            확장성 - 새로운 서비스가 추가되어도 미들웨어에만 연결되면 됨. 
+        단점: 
+            메시지 전체 관리하는 시스템이 따로 필요 -> 도입비용, 운용 비용 
+            시스템 구조가 복잡해짐
+        MOM은 설계적 방향성을 제시하는것 뿐.
+        직접적 구현: AMQP (미들웨어 브로커 간 메시지 교환을 위한 프로토콜), zeroMQ, RabbitMQ, Kafka 등.. 
+    - 사용하는 이유: 
+        송신자가 수신자에게 그냥 보내는건 안되나? -> 송신자가 많이 보내면 수신자 과부하>? -> 이건 브로커도 마찬가진가? -> 브로커가 고성능 서버면 차라리 수신자도 고성능으로 해서 복잡성 낮추면 안되나?? 
+        이렇게 생각할수있음. BUT decoupling !!! 
+    - 메시지를 매개로 하여 비동기적으로 데이터를 주고받는 소프트웨어". -> 브로커가 있느냐 없느냐보다는 "애플리케이션과 네트워크 프로토콜 사이에 추상화 계층이 있는가"가 더 중요
+
+
 11. ZeroMQ
-    - 
+    - message brokerless ! -> 브로커 추가한다는건 장애지점, 관리비용이 늘어나는것! 
+    - raw socket programming의 단점과 zeromq의 극복
+    1. 포어그라운드 vs 백그라운드 (Blocking vs Non-blocking)
+        일반 소켓 프로그래밍에서는 recv()나 accept() 시 흐름이 멈추는(Blocking) 문제를 해결하기 위해 멀티스레딩이나 Select/Poll/Epoll 같은 복잡한 I/O 멀티플렉싱을 직접 구현해야 합니다.
+        ZeroMQ의 해결: 모든 통신이 내부 I/O 스레드에서 비동기로 처리됩니다. 사용자 코드(애플리케이션 스레드)는 메시지를 큐에 던지기만 하고 즉시 다음 작업을 수행할 수 있어, 통신 모델 설계가 훨씬 단순해집니다.
+
+    2. 존재 책임과 Reconnect 주체 문제
+        클라이언트가 서버보다 먼저 켜지거나, 서버가 재시작될 때 소켓은 보통 Connection Refused 에러를 뱉고 종료됩니다. 누가 먼저 접속을 시도할지(Retry 로직)를 정하는 것도 골치 아픈 일입니다.
+        ZeroMQ의 해결: "신뢰성 있는 재연결(Automatic Reconnect)"을 라이브러리 레벨에서 보장합니다. 어떤 노드가 먼저 켜지든 상관없으며, 연결이 끊기면 백그라운드에서 자동으로 재시도합니다. 개발자는 상대방의 상태를 체크하는 '연결 관리자' 역할에서 해방됩니다. (상대 오프라인일 때 send해도 에러 없음. 메시지는 내부 큐로! )
+
+    3. 메시지 프레이밍 (Data Framing)
+        TCP는 Byte Stream 방식입니다. 100바이트를 보냈어도 받는 쪽에서는 네트워크 상황에 따라 50바이트, 50바이트씩 나눠서 받을 수 있습니다. 비디오나 텍스트 같은 가변 데이터를 처리하려면 헤더에 길이를 적고 파싱하는 로직을 직접 짜야 합니다.
+        ZeroMQ의 해결: "Message-based Transport"를 제공합니다. 보내는 쪽에서 한 덩어리로 보내면 받는 쪽에서도 반드시 그 한 덩어리(Atomic Message)로 받습니다. 데이터가 아무리 크거나 작아도 "경계(Boundary)"를 라이브러리가 지켜줍니다.
+  
+    4. 큐(Queue) 관리와 Overload 전략 (HWM)
+        소켓 버퍼가 가득 차면 시스템은 패킷을 버리거나 송신측을 블로킹합니다. 이를 애플리케이션에서 제어하기는 매우 어렵습니다.
+        ZeroMQ의 해결: HWM(High Water Mark) 옵션을 제공합니다. 큐가 꽉 찼을 때 메시지를 조용히 버릴지(Drop), 아니면 송신자를 대기시킬지(Block)를 설정 한 줄로 결정할 수 있습니다. 이는 시스템의 배압(Backpressure)을 조절하는 핵심 장치가 됩니다.
+
+    - 기능
+    1. request/reply
+    --------------server----------------
+    const zmq = require("zeromq");
+
+    async function runServer() {
+    const sock = new zmq.Reply(); // 응답 소켓 생성
+
+    await sock.bind("tcp://127.0.0.1:3000");
+    console.log("응답 서버가 3000번 포트에서 대기 중...");
+
+    for await (const [msg] of sock) {
+        console.log(`수신된 요청: ${msg.toString()}`);
+        
+        // 비즈니스 로직 처리 (예: DB 조회 등)
+        await new Promise(resolve => setTimeout(resolve, 500)); 
+        
+        await sock.send("World"); // 답장 전송
+    }
+    }
+
+    runServer();
+
+    -------------client---------
+    const zmq = require("zeromq");
+
+    async function runClient() {
+    const sock = new zmq.Request(); // 요청 소켓 생성
+
+    sock.connect("tcp://127.0.0.1:3000");
+    console.log("서버에 연결됨");
+
+    console.log("요청 보냄: Hello");
+    await sock.send("Hello");
+
+    const [result] = await sock.receive();
+    console.log(`서버로부터 응답 받음: ${result.toString()}`);
+    }
+
+    runClient();
+
+    2.push/pull - 로드밸런싱 지원. (push 소켓은 연결돤 pull소켓들에게 메시지를 round-robin방식으로 나눔)
+    -------생산자--------
+    const zmq = require("zeromq");
+
+    async function runProducer() {
+    const sock = new zmq.Push();
+
+    await sock.bind("tcp://127.0.0.1:4000");
+    console.log("작업 생산자 준비 완료 (4000번 포트)");
+
+    let taskNum = 0;
+    setInterval(async () => {
+        taskNum++;
+        const message = `Task #${taskNum}`;
+        console.log(`${message} 생성 및 분배 중...`);
+        await sock.send(message);
+    }, 1000); // 1초마다 작업 생성
+    }
+
+    runProducer();
+
+    --------소비자0---------
+    const zmq = require("zeromq");
+
+    async function runWorker(name) {
+    const sock = new zmq.Pull();
+
+    sock.connect("tcp://127.0.0.1:4000");
+    console.log(`작업자 ${name} 대기 중...`);
+
+    for await (const [msg] of sock) {
+        console.log(`작업자 ${name}가 처리 중: ${msg.toString()}`);
+        
+        // 작업 처리 시뮬레이션 (비디오 인코딩, 데이터 분석 등)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    }
+
+    // 실행 시 이름을 인자로 줄 수 있음 (예: node worker_pull.js A)
+    runWorker(process.argv[2] || "Default");
+    
