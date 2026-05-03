@@ -36,7 +36,8 @@
     "undici": "^7.22.0",
     "websocket": "^1.0.35",
     "winston": "^3.19.0",
-    "ws": "^8.20.0"
+    "ws": "^8.20.0",
+    "zeromq": "^6.5.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
