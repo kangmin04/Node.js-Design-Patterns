@@ -44,7 +44,7 @@ subSocket.subscribe('chat_messages');
 
 async function receiveMessages(){
     for await (const [_topic, msg] of subSocket){
-        console.log(`Received messages from another server: ${msg}`)
+        console.log(`Received messages from another server: ${msg}`) /* 백틱 형식의 템플릿 리터럴의 경우, JS가 객체를 문자열로 표현하기위해 내부적으로 toString() 호출함. 결국 둘다 msg 자체는 버퍼임!  */
         broadcast(Buffer.from(msg)) /* braodcast 도중, zeromq가 다음 메시지 수신하여 msg가 가리키던 메모리 공간을 덮어쓸 경우, 데이터 손실발생. 
         buffer.from을 통해 기존 버퍼의 내용을 그대로 복사하여, 완전히 새로운 독립적인 버퍼 객체 생성함. 
         */
@@ -56,7 +56,7 @@ const wss = new WebSocketServer({server});
 wss.on('connection', client => {
     console.log('client connected'); 
     client.on('message', msg => {
-        console.log('message:', msg)
+        console.log('message:', msg.toString()) 
         broadcast(msg); /* ws는 zeromq보다 고수준의 라이브러리. message 이벤트 실행 동안, ws는 msg의 내용이 변하지않고 안전하게 유지되는것을 보장해줌.  
         */
         pubSocket.send(['chat_messages', msg])
@@ -69,3 +69,9 @@ function broadcast(msg){
         }
     }
 }
+
+
+server.listen(args.http, () => {
+    console.log(`Server listening on port ${args.http}`)
+
+})
