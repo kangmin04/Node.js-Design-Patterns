@@ -479,3 +479,22 @@ WebSocket 이전의 보완 기술들:
         When message acknowledgements are in use, a broker will only completely remove a message from a queue when it receives a notification for that message (or group of messages).
 
         - routing algorithm used depends on the exchange type and rules called bindings
+        - 주요 메서드 (amqplib 기준)
+                        1. 연결 및 채널 설정 (Setup)
+                            - `amqp.connect(url)`: RabbitMQ 서버와 TCP 연결 생성. 연결 객체 담은 promise 반환
+                            - `connection.createChannel()`: 연결 내에 독립적인 통신 회선(채널) 생성. 대부분의 작업은 채널을 통해 이루어짐. 채널(Channel) 객체를 담은 Promise 반환
+
+                        2. 구조 선언 (Declare) - 없으면 만들고, 있으면 넘어감! 
+                            - `channel.assertExchange(name, type, options)`: Exchange를 선언(생성). // type (string): Exchange의 타입 ('direct', 'fanout', 'topic'). options (object): { durable: true } 설정 시 브로커가 재시작되어도 Exchange가 유지 
+                            - `channel.assertQueue(name, options)`: Queue를 선언(생성).
+                            - `channel.bindQueue(queue, source, pattern)`: Exchange와 Queue를 바인딩(연결).
+
+                        3. 메시지 발행 (Publish)
+                            - `channel.publish(exchange, routingKey, content, options)`: Exchange에 메시지를 발행.
+                                - `options`: `{ persistent: true }` 설정 시 메시지 영속성 부여.
+
+                        4. 메시지 소비 (Consume)
+                            - `channel.consume(queue, onMessage, options)`: 큐를 구독하여 메시지를 비동기적으로 수신.
+                                - `options`: `{ noAck: false }`가 기본이며, 수동 확인 응답을 의미 (권장).
+                            - `channel.ack(message)`: 메시지 처리 성공 확인 응답. 큐에서 메시지를 안전하게 제거.
+                            - `channel.nack(message, all, requeue)`: 메시지 처리 실패 응답. 큐에 다시 넣거나 폐기하도록 제어.        
