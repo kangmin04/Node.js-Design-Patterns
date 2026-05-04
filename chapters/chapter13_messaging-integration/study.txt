@@ -451,3 +451,31 @@ WebSocket 이전의 보완 기술들:
 442.          - 예: "소켓 디스크립터 7번으로 이 데이터를 보내줘!" 라고 OS에 요청 &rarr; OS가 실제 네트워크 통신을 처리.
 443.          - 클라이언트는 서버의 소켓 디스크립터가 몇 번인지 전혀 알지 못하며, 알 필요도 없습니다. 이것은 순전히 서버 애플리케이션과 OS 사이의 약속입니다.
 
+
+
+   14. AMQP 
+        - MOM (메시지 지향 미들웨어)를 위한, 개방형 표준 프로토콜. 
+        - publisher -> broker -> consumer로 큰 흐름이 있고, broker에 AMQP의 3가지 요소가 있음. 
+            broker: publisher과 consumer 사이에서 메시지를 관리하고 전달하는 중앙 서버
+                ① exchange: publisher로 받은 메시지를 어떤 큐에 보낼지 결정하는 라우팅 역할 
+                    - 방식 3가지 + α
+                        ⓐ Direct Exchange: 메시지의 라우팅 키(routing key)와 큐의 바인딩 키(binding key)가 정확히 일치하는 큐로 메시지를 전송. (1:1 통신에 적합)
+                        ⓑ Fanout Exchange: 라우팅 키를 무시하고, 자신에게 바인딩된 모든 큐에 메시지를 브로드캐스팅(전체 전송). (전체 공지, 1:N 통신에 적합)
+                        ⓒ Topic Exchange: 라우팅 키에 패턴 매칭을 사용. `*`(하나의 단어), `#`(0개 이상의 단어) 와일드카드를 이용해 복잡하고 유연한 라우팅 규칙을 만들 수 있음. (예: `logs.critical.*`)
+
+                ② Queue (큐): Consumer가 메시지를 가져가기 전까지 안전하게 보관하는 저장소.
+                    - 생성 시 주요 속성들:
+                        ⓐ durable: `true`일 경우, 브로커가 재시작되어도 큐의 정의가 사라지지 않고 유지됨 (디스크에 저장). 메시지 자체의 영속성은 별개.
+                        ⓑ exclusive: `true`일 경우, 큐를 선언한 연결(connection)에서만 접근 가능하며, 해당 연결이 끊어지면 큐가 자동으로 삭제됨.
+                        ⓒ auto-delete: `true`일 경우, 마지막 소비자가 구독을 취소하면 큐가 자동으로 삭제됨.
+
+                ③ Binding (바인딩): Exchange와 Queue를 연결하는 규칙
+                    - "이 Exchange는 이 routing key 패턴을 가진 메시지를 저 Queue로 보내라" 라고 정의함.
+
+
+
+        - 메시지 전달 실패(네트워크 오류 등) 방지하기 위해 
+        -> message acknowledgements사용 : when a message is delivered to a consumer the consumer notifies the broker, either automatically or as soon as the application developer chooses to do so. 
+        When message acknowledgements are in use, a broker will only completely remove a message from a queue when it receives a notification for that message (or group of messages).
+
+        - routing algorithm used depends on the exchange type and rules called bindings
