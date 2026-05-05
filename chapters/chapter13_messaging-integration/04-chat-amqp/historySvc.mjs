@@ -15,7 +15,7 @@ channel.consume(queue, async (msg) => {
     try{
         const data = JSON.parse(msg.content.toString())
         console.log(`Saving messages: ${msg.content}`)
-        await db.put(ulid(), data); //에러 처리 안해도 괜찮나?? level DB에 자동으로 구현되어있는건가?? -> ㅋㅋ 에러 처리 해줘야 함 !! 
+        await db.put(ulid(), data); //에러 처리 안해도 괜찮나?? level DB에 자동으로 구현되어있는건가?? -> ㅋㅋ 에러 처리 해줘야 함 !!  + 멱등성 보장 고려해봐여함. 
         channel.ack(msg) // msg 객체 내부의 deliveryTag를 이용해 어떤 메시지를 처리했는지 명확히 함. (msg엔 content뿐만아니라, 식별하기위한 deliveryTag 존재함)
     }catch(err){
         console.error(`Failed to process messages: `, err)
