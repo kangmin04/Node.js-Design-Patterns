@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^1.0.5",
     "ansi-styles": "^6.2.3",
     "axios": "^1.13.2",
     "chance": "^1.1.13",
@@ -33,6 +34,7 @@
     "split2": "^4.2.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "ulid": "^3.0.2",
     "undici": "^7.22.0",
     "websocket": "^1.0.35",
     "winston": "^3.19.0",
