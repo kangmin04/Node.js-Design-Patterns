@@ -33,7 +33,7 @@ channel.consume(queue, async (msg) => {
     }
 })
 
-createServer((req,res) => {
+createServer(async (req,res) => {
     //fetch로 chat 과거 데이터 요청 시 
     const url = new URL(req.url, `http:localhost`)
     const lt = url.searchParams.get('lt'); 

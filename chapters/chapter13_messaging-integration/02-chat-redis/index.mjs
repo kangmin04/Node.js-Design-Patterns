@@ -24,7 +24,9 @@ redisSub.subscribe('chat_messages')
 redisSub.on('message', (channel, msg) => {
   if (channel === 'chat_messages') {
     console.log(`Received message from Redis: ${msg}`)
+    console.log(`wss.clients: ${wss.clients}`)
     for (const client of wss.clients) {
+      console.log(`client: ${client}`)      
       if (client.readyState === WebSocket.OPEN) {
         client.send(Buffer.from(msg))
       }
