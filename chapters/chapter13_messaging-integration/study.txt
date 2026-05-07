@@ -530,17 +530,34 @@ WebSocket 이전의 보완 기술들:
             ⓑ RabbitMQ (Broker 모델): Publisher와 Subscriber는 서로의 존재나 주소를 전혀 알 필요가 없습니다.
                                       그들은 오직 중앙의 브로커(RabbitMQ 서버) 주소만 알면 됩니다. 모든 통신은 브로커를 통해 이루어집니다.
         
-        // history-service  in 8090 port
-        GET REQUEST -> return db's chat data 
-        1 database for history-service 
-        publish the msg from client (8080) -> fanout methods -> 
-        
-        make queue for {durable:true} -> bindQueue('chat', queue) -> queue
-        channel.consume(queue, msg => {
-            storeInDb(msg)
-        })
+        - dead letter exchange apply! 
+        문제 상황: RabbitMq는 Consumer가 ack (처리 성공) 또는 nack (처리 실패) 응답을 보내지 않고 그냥 연결이 끊기거나 타임아웃이 되면, 
+                  RabbitMQ는 "메시지가 처리되지 않은 것 같다"고 판단하고 메시지를 큐에 다시 집어넣습니다 (Requeue).
+                -> 계속 DB에러 날 경우, 무한루프로 시스템 마비 가능. 
+        해결: DLX ! 
+            - dlx용 exchange와 queue 생성
+                await channel.assertExchange('dlx', 'fanout')
+                const {queue:queueDLX} = await channel.assertQueue('dlq', {durable: true})
+                await channel.bindQueue(queueDLX, 'dlx')
 
-        db = levelDb
+            - 기존 main queue에 arguements 추가 
+                const {queue} = await channel.assertQueue('chat-history', {
+                    durable: true, 
+                    arguments: {
+                    'x-dead-letter-exchange': 'dlx'
+                }
+            }) 
+
+    
+
+            - queue maximum length? : 
+                RabbitMQ 큐의 길이는 서버의 메모리와 디스크 공간이 허용하는 한 제한이 없음 
+                BUT consumer이 멈췄을 때 queue에 무한정 쌓이면 서버 리소스 고갈로위험할수도! -> arguments : {'x-max-length': 1000} 처럼 설정 가능. 초과 시 가장 오래된 큐부터 삭제 
+
+            - dlq 쌓인걸 처리할 떄 기존 exchange로 다시 publish 해주면 쉽게 가능 ! 
+            - 10분 쿠폰같은 경우 ttl 사용! ->  arguments: {'x-message-ttl': 3600000 }이렇게! 
+
+
         ### [심화] RabbitMQ 공유 모델과 Chat App 상세 워크플로우
 
         핵심 개념: Exchange와 Queue는 각 서비스의 메모리나 프로세스 내에 존재하는 것이 아닙니다. 이들은 **독립된 RabbitMQ 브로커(서버) 프로세스 안에 존재하는 객체**이며, 모든 서비스는 네트워크를 통해 이 '중앙 브로커'에 접속하여 공유합니다.

@@ -23,7 +23,7 @@ channel.consume(queue, async (msg) => {
             RabbitMQ의 기본 동작: Consumer가 ack (처리 성공) 또는 nack (처리 실패) 응답을 보내지 않고 그냥 연결이 끊기거나 타임아웃이 되면, 
             RabbitMQ는 "메시지가 처리되지 않은 것 같다"고 판단하고 메시지를 큐에 다시 집어넣습니다 (Requeue).
             -> 계속 DB에러 날 경우, 무한루프로 시스템 마비 가능. 
-            해결 ① channel.neck(message, all, requeue) 에서 requeue를 galse로 줄 경우, 이 큐가 문제있으니 다시 큐에 넣지말고 버려달란 뜻 => channel.nack(msg, false, false); 
+            해결 ① channel.neck(message, all, requeue) 에서 requeue를 false로 줄 경우, 이 큐가 문제있으니 다시 큐에 넣지말고 버려달란 뜻 => channel.nack(msg, false, false); 
             BUT 메시지가 영원히 사라지기에 중요 데이터라면 큰 문제
             해결 ② Dead Letter Exchange (DLX)
                 - 실패한 메시지만 모아두는 별도의 장소에 저장하는 방법 ! 
