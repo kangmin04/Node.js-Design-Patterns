@@ -687,7 +687,11 @@ WebSocket 이전의 보완 기술들:
         - 역할: 소비자 그룹에 속한 소비자로서, 아직 처리되지 않은 메시지를 가져와 처리.
         - 사용법: `redis.xreadgroup('GROUP', group, consumer, 'STREAMS', key, '>')`
         - 설명: `group`에 속한 `consumer`가 `key` 스트림에서 아직 아무도 가져가지 않은 새 메시지(`>`)를 읽음. 메시지가 그룹 내 다른 소비자에게 중복 전달되지 않음 (작업 분배).
-
+    ④ XREAD('BLOCK', '0', 'STREAMS', 'chat_stream', lastRecordId) 형태 
+        - BLOCK: 요청한 데이터가 스트림에 없을 경우, 지정된 시간(밀리초) 동안 클라이언트의 연결을 유지하며 대기함. 
+          BLOCK 0 일 경우, 데이터 들어올 때까지 계속 기다림. 
+        - STREAMS: "이제부터 읽을 스트림 키(Key)들과 그 시작 ID들을 나열하겠다"라고 선언하는 구분자(Delimiter) 역할. 
+        
     ④ XACK: 메시지 처리 완료 확인
         - 역할: `XREADGROUP`으로 가져간 메시지의 처리가 완료되었음을 Redis에 알림.
         - 사용법: `redis.xack(key, group, messageId)`
@@ -697,3 +701,17 @@ WebSocket 이전의 보완 기술들:
         - 역할: 스트림에 대한 새로운 소비자 그룹을 생성.
         - 사용법: `redis.xgroup('CREATE', key, group, '$', 'MKSTREAM')`
         - 설명: `key` 스트림에 `group`이라는 소비자 그룹을 생성. `$`는 생성 시점 이후의 새 메시지부터 읽겠다는 의미. `MKSTREAM`은 스트림이 없으면 자동 생성.
+
+    - chat application에서 client, clientread 2개를 만듦. 
+    xread시에 전체 프로세스가 멈추기에 두개의 클라이언트를 나눔! 
+
+    "공유 로그(Shared Log)를 매개체로 한 생산자-소비자 관계"
+        - 생산자(Producer): redisClient가 메시지를 chat_stream이라는 저장소에 던집니다.
+        - 공유 저장소: Redis 서버 내부의 chat_stream이라는 메모리 공간에 데이터가 쌓입니다.
+        - 소비자(Consumer): redisClientXread는 이 저장소를 계속 지켜보고 있다가, 데이터가 들어오는 순간 낚아챕니다.
+    - 흐름: 
+        사용자 A가 채팅을 보냄 → 서버의 redisClient가 XADD chat_stream ... 실행.
+        Redis 서버는 chat_stream이라는 키에 데이터를 저장함.
+        이때, Redis 서버는 생각합니다. "오, chat_stream에 데이터가 들어왔네? 아까 이걸 기다린다고 했던 애(redisClientXread)가 누구였지?"
+        Redis 서버가 잠들어 있던 redisClientXread에게 데이터를 툭 던져줍니다.
+        redisClientXread의 await가 풀리면서 다음 코드가 실행되고, broadcast 함수를 통해 모든 접속자에게 메시지가 전달됩니다.
