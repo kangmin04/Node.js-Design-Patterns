@@ -690,7 +690,7 @@ WebSocket 이전의 보완 기술들:
     ④ XREAD('BLOCK', '0', 'STREAMS', 'chat_stream', lastRecordId) 형태 
         - BLOCK: 요청한 데이터가 스트림에 없을 경우, 지정된 시간(밀리초) 동안 클라이언트의 연결을 유지하며 대기함. 
           BLOCK 0 일 경우, 데이터 들어올 때까지 계속 기다림. 
-        - STREAMS: "이제부터 읽을 스트림 키(Key)들과 그 시작 ID들을 나열하겠다"라고 선언하는 구분자(Delimiter) 역할. 
+        - STREAMS: "이제부터 읽을 스트림 키(Key)들과 그 시작 ID들을 나열하겠다"라고 선언하는 구분자(Delimiter) 역할(스트림 목록의 시작을 알리며, 항상 STREAMS만옴! 다른 옵션 X). 
         
     ④ XACK: 메시지 처리 완료 확인
         - 역할: `XREADGROUP`으로 가져간 메시지의 처리가 완료되었음을 Redis에 알림.
@@ -715,3 +715,20 @@ WebSocket 이전의 보완 기술들:
         이때, Redis 서버는 생각합니다. "오, chat_stream에 데이터가 들어왔네? 아까 이걸 기다린다고 했던 애(redisClientXread)가 누구였지?"
         Redis 서버가 잠들어 있던 redisClientXread에게 데이터를 툭 던져줍니다.
         redisClientXread의 await가 풀리면서 다음 코드가 실행되고, broadcast 함수를 통해 모든 접속자에게 메시지가 전달됩니다.
+
+
+
+
+
+
+
+8080에서 client 접속하면 그때 clientID를 1로 주고,8081 에선 2로 주잖아. 
+이때, ws.connection 될 때 바로 client.send(ID)로 각자의 클라이언트에게 본인 고유 Id를 전달해줌. -->But 새로고침할때마다 전달 안되게 하려면, if로 해야할 거같은데 마땅한 수가 안떠오름..... 
+
+그럼 ws.onMessage가 실행될것! -> 여기서 if 로 기존 client에 id가 있엇으면 continue로 넘어가고, id가 없으면 id배정. 
+
+이후, 프론트에서 msg가 오면, client.on(message)에서, 해당 msg엔 xadd시 기존 text, timestamp에 id까지 추가해서 보내주고, 
+-> xread한 데이터에서 id까지 포함해서 broadcast로 client.send() 그대로 보내줌. 
+
+ws.onMessage()에서 id추출하고, defualt id와 비교해서 본인 id면 내가 보낸 메시지니, 다른 색, 다른 위치로 클래스 넣어서 css로 위치 설정해주고, 
+남이 보낸 msg면 마찬가지로 class로 구분하여 색 및 위치 구분. 
