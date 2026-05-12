@@ -53,13 +53,17 @@ async function listenForMessages() {
     let lastId = '$';
     while (true) {
         const results = await redisClientXread.xread('BLOCK', 0, 'STREAMS', 'chat_stream', lastId);
-        const [[, messages]] = results;
+        const [[, messages]] = results; /* 여기서 message는 redis stream에서 읽어온 값이고, ioRedis는 Buffer혹은 문자열로 가져옴. */
         for (const [id, [, message]] of messages) {
             console.log(`Message from stream: ${message}`)
             // 모든 클라이언트에게 브로드캐스팅
             for (const client of wss.clients) {
                 if (client.readyState === client.OPEN) {
-                    client.send(message);
+                    client.send(message); /* client.send()에 buffe 혹은 문자열 전달되었으므로, 이를 Binary Frame에 담아서 보냄.  */
+                    /* 
+                        클라이언트에선 ws.onmessage로 받는데, Binary Frame을 Blob 형식으로 담아서 줌.
+                        blob 객체에 담기므로, 바로 JSON.parse못함
+                    */
                 }
             }
             lastId = id;
