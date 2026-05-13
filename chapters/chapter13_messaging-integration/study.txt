@@ -411,6 +411,8 @@ WebSocket 이전의 보완 기술들:
         추가로 node index.mjs --http 8081 --pub 5001 --sub 5000 --sub 5002, node index.mjs --http 8082 --pub 5002 --sub 5000 --sub 5001
         다음 라인을 실행하여 3개의 서버가 서로 구독하는 관계를 만듦. 
         -> 8080에서 msg 작성하면, 5000, 5002로 전달됨. 
+    - brokerless 기반이기에, 각 어플리케이션은 P2P로 직접 통신함. -> bind된 노드는 단지 연결 지점 역할을 할 뿐, 메시지 중개하는 서버가 아님 !! 
+
     - 기존은 tcp://로 사용했으나, ipc://도 가능. ipc는 프로세스 내에서 전달하고 받는것. -> tcp/ip 스택을 거칠 필요가 없어, 오버헤드가 작음 
     - 하나의 프로세스 내에서 같은 주소에 bind와 connect 불가!!!
     - [ZeroMQ PUB/SUB (Brokerless 모델)의 한계]
@@ -426,6 +428,25 @@ WebSocket 이전의 보완 기술들:
             2. Broker는 이 메시지를 모든 구독자에게 전파합니다. 여기서 "모든 구독자"에는 서버 A 자신도 포함됩니다.
             3. 따라서 서버 A는 sub 로직에서 자신이 보낸 메시지를 다시 돌려받고, 연결된 클라이언트들에게 broadcast합니다.
             4. 로직이 단순해집니다: "메시지 수신 -> 무조건 방송"
+
+    - 서버에서 바인드 할 때 
+    1. JavaScript 계층: await pushSocket.bind('tcp://*:5000') 코드를 실행합니다.
+    2. Node.js 바인딩 계층: zeromq 라이브러리가 이 JavaScript 호출을 C++ 함수 호출로 변환합니다.
+    3. ZeroMQ 코어 계층 (C++):
+        소켓 생성: OS(운영체제)에게 TCP 소켓을 만들어달라고 요청합니다. (socket() 시스템 콜) (OS는 socket() 시 커널 메모리 공간과 데이터 구조(상태, 버퍼 등)를 할당하고, 이 리소스에 접근할 수 있는 fd 줌. 해당 fd로 application이 통신 제어함.)
+        주소 할당: 만들어진 소켓에 tcp://*:5000 주소를 할당(점유)합니다. (bind() 시스템 콜) (서버의 모든 IP 주소에 대해 5000port로 들어오는 TCP 연결은 아까 만든 소켓(fd)로 처리하겠다고 OS에 등록하는 것)
+        연결 대기: 외부 연결을 받을 준비를 합니다. (listen() 시스템 콜) ( 대기 큐 생성하고, 실제 클라이언트 요청오면 요청을 대기큐에 넣음. )
+        I/O 폴러(Poller) 등록: 이 소켓을 ZeroMQ의 백그라운드 I/O 스레드가 관리하는 I/O 감시 목록(epoll, kqueue 등)에 등록합니다. 이제부터 이 소켓으로 들어오는 모든 연결 요청은 I/O 스레드가 감지하게 됩니다.
+        결과: pushSocket은 5000번 포트를 리스닝하며, 새로운 PULL 워커의 접속을 기다리는 '접수 창구'가 됩니다. 하지만 아직 실제 워커와 연결된 상태는 아닙니다.
+
+    - 클라이언트에서 connect 할 때 
+    1. JavaScript 계층: 워커 프로세스에서 await pullSocket.connect('tcp://<server_ip>:5000') 코드를 실행합니다.
+    2. Node.js 바인딩 & 코어 계층:
+        소켓 생성: 워커 측에서도 OS에게 TCP 소켓을 만들어달라고 요청합니다. (socket() 시스템 콜)
+        서버에 연결: 이 소켓을 사용해 서버 주소(tcp://<server_ip>:5000)로 연결을 시도합니다. (connect() 시스템 콜) 이 과정에서 TCP 3-way-handshake가 일어납니다.
+        연결 성공: 서버의 pushSocket이 연결을 수락하면, PUSH-PULL 간에 하나의 TCP 연결 파이프라인이 생성됩니다.
+        I/O 폴러 등록: PUSH 측과 마찬가지로, 이 연결된 소켓 역시 양쪽(PUSH, PULL)의 I/O 스레드 감시 목록에 등록됩니다.
+        결과: 서버의 pushSocket은 이제 자신에게 연결된 pullSocket의 목록을 내부적으로 유지하게 됩니다. (예: [worker_A_connection, worker_B_connection, ...])
 
 
 13. socket
