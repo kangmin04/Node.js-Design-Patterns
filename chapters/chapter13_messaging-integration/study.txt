@@ -448,6 +448,20 @@ WebSocket 이전의 보완 기술들:
         I/O 폴러 등록: PUSH 측과 마찬가지로, 이 연결된 소켓 역시 양쪽(PUSH, PULL)의 I/O 스레드 감시 목록에 등록됩니다.
         결과: 서버의 pushSocket은 이제 자신에게 연결된 pullSocket의 목록을 내부적으로 유지하게 됩니다. (예: [worker_A_connection, worker_B_connection, ...])
 
+    - PUSH/PULL과 bind, connect간 관계. 
+        - 난 처음에 push 소켓에는 무조건 서버라 bind라고 생각했음. (이건 일반적인 웹에선 맞는 말)
+        다만 log aggregator처럼 하나의 sink에서 데이터를 PULL 해야하는 상황이고 여러 transient node인 worker에서 PUSH를 하는경우엔, durable한 Node에 bind를 줘야함.
+        즉 Push에도 conenct를 주고, pull에는 bind를 주는 경우도 생김! 
+
+        - 방화벽 및 네트워크 보안 문제 (NAT 호환성)
+        실무에서 분산 시스템을 구축할 때 가장 큰 걸림돌 중 하나는 방화벽(Firewall)과 공유기(NAT)입니다.
+        보통 회사나 집에서 쓰는 컴퓨터(Worker)는 외부에서 함부로 접속할 수 없도록 방화벽이 쳐져 있거나 가상 IP를 씁니다. 즉, 외부에서 이 Worker 컴퓨터를 향해 connect를 찌르는 것은 보안상 거의 불가능합니다. (포트 포워딩 같은 복잡한 설정이 필요합니다.)
+        반면, 클라우드에 올려둔 메인 서버(Ventilator)는 공인 IP를 가지고 있고 포트가 열려 있기 때문에, 내 컴퓨터(Worker)가 서버를 향해 나가는 연결(Outbound connect)을 시도하는 것은 방화벽에 걸리지 않고 아주 자유롭습니다.
+        따라서 안정적인 서버에 bind를 주고, 사설 네트워크에 있는 작업자들에게 connect를 주는 것이 네트워크 설정상 훨씬 현실적이고 안전합니다.
+
+        - IP 주소를 몰라도 됨 (서비스 디스커버리 최소화)
+        Worker가 bind할 때: 메인 서버는 모든 Worker의 IP 주소를 실시간으로 다 기억하고 관리해야 합니다. (Worker가 갑자기 죽으면 그 IP를 목록에서 지워야 함)
+        서버가 bind할 때: Worker들은 메인 서버의 IP 딱 하나만 기억하면 됩니다. 수많은 Worker의 주소를 관리하는 복잡한 시스템(Service Discovery)을 구축할 필요가 없어집니다.
 
 13. socket
     - 소켓은 소프트웨어로 작성된 통신 접속점이라고 할 수 있는데 네트웍 응용 프로그램은 소켓을 통하여 통신망으로 데이터를 송수신하게 된다.

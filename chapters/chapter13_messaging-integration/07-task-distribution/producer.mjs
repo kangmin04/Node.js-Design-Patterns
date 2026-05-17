@@ -2,7 +2,7 @@ import zmq from 'zeromq'
 import { generateTasks } from './generateTasks.mjs'
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
-const BATCH_SIZE = 10000
+const BATCH_SIZE = 5000
 
 const [, , maxLength, searchHash] = process.argv
 const ventilator = new zmq.Push(); 
