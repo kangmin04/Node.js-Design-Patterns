@@ -4,7 +4,7 @@ export function createReplyChannel(channel){ //process
             if(message.type !== 'request'){
                 return
             }
-            const replyData = await handler(message.data)
+            const replyData = await handler(message.data) /* req => return new Promise(resolve => setTImeout({sum:req.a + req.b}), req.delay 실행 ) */
             channel.send({
                 type: 'response', 
                 data: replyData, 

@@ -28,7 +28,10 @@ export function createRequestChannel(channel){
     }
     /* 자식 프로세스에서 메시지 도착 */
     channel.on('message', message => {
-        
+        const replyCb = correlationMap.get(message.inReplyTo)
+        if(replyCb){
+            replyCb(message.data) /* 자식프로세스에서 handler로 준, req.delay이후에 sum계산 함. 이후, process.send()로 data, inReplyTo줌.  */
+        }
     })
 
     return sendRequest; 
