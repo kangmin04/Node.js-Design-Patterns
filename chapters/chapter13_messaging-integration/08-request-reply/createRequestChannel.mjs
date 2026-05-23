@@ -13,7 +13,7 @@ export function createRequestChannel(channel){
 
             /* map에 id와 future cb 등록 */
             correlationMap.set(correlationId, replyData => {
-                correlationMap.delete(correlationId)
+                correlationMap.delete(correlationId) /* 여기서 correlationId말고 replyData.id로 사용해야된다 생각했으나, 클로져이기에 correlationId그대로가 더 적합.  */
                 clearTimeout(replyTimeout)
                 resolve(replyData)
             })
