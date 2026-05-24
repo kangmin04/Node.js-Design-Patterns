@@ -14,6 +14,7 @@ export class amqpReply{
             this.requestsQueueName
         )
         this.queue = queue; 
+        // console.log('DEBUG- queue: ', this.queue)
     }
 
     handleRequests(handler){

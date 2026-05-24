@@ -13,11 +13,15 @@ export class AmqpRequest{
             {exclusive: true}
         )
         this.replyQueue = queue
+        // console.log('[debug] replyQueue: ', this.replyQueue)
         this.channel.consume(
             this.replyQueue, 
             msg => {
+                
                 const correlationId = msg.properties.correlationId
                 const handler = this.correlationMap.get(correlationId)
+                // console.log('debug: consume 실행됨. ')
+                // console.log('correlationId: ', correlationId)
                 if(handler){
                     handler(JSON.parse(msg.content.toString()))
             }
