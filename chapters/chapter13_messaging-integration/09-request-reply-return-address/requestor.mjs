@@ -12,13 +12,16 @@ await request.initialize();
 async function sendRandomRequest() {
     const a = Math.round(Math.random() * 100)
     const b = Math.round(Math.random() * 100)
+    // console.log('[debug] a, b: ', a, b)
     const reply = await request.send('requests_queue', { a, b })
+    console.log('debug] after reply') // this doesnt work ....... 
     console.log(`${a} + ${b} = ${reply.sum}`)
   }
   
-  for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 20; i++) {
+    console.log('Sending request...', i)
     await sendRandomRequest()
     await setTimeout(1000)
-  }
+}
   
-  request.destroy()
+request.destory();

@@ -31,13 +31,14 @@ export class AmqpRequest{
             const replyTimeout = setTimeout(() => {
                 this.correlationMap.delete(id)
                 reject(new Error(`Request timed out`))
-            })
-
+            }, 10000)
+            
             this.correlationMap.set(id, replyData => {
                 this.correlationMap.delete(id)
                 clearTimeout(replyTimeout)
                 resolve(replyData)
             })
+            console.log('[DEDUB] MAP: ', this.correlationMap)
 
             this.channel.sendToQueue(
                 queue, // requests_queue
