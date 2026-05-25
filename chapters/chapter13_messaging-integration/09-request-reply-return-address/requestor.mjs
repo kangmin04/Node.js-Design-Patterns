@@ -18,9 +18,15 @@ async function sendRandomRequest() {
     console.log(`${a} + ${b} = ${reply.sum}`)
   }
   
+async function sendOrderedRequest(argA, argB){
+    const reply = await request.send('requests_queue', {a: argA, b: argB})
+    console.log(`${argA} + ${argB} = ${reply.sum}`)
+}
+
 for (let i = 0; i < 20; i++) {
-    console.log('Sending request...', i)
-    await sendRandomRequest()
+    // console.log('Sending request...', i)
+    // await sendRandomRequest()
+    await sendOrderedRequest(i, i+1)
     await setTimeout(1000)
 }
   

@@ -9,7 +9,7 @@ export class AmqpRequest{
         this.connection = await amqp.connect('amqp://localhost')
         this.channel = await this.connection.createChannel()
         const {queue} = await this.channel.assertQueue(
-            '', 
+            '', /* 익명 exchange 사용! -> direct타입이고, 라우팅키와 이름 일치하는 큐로 보냄. 여기선 sendToQueue에서 큐 이름을 라우팅키로 사용  */
             {exclusive: true}
         )
         this.replyQueue = queue
@@ -42,7 +42,7 @@ export class AmqpRequest{
                 clearTimeout(replyTimeout)
                 resolve(replyData)
             })
-            console.log('[DEDUB] MAP: ', this.correlationMap)
+            // console.log('[DEDUB] MAP: ', this.correlationMap)
 
             this.channel.sendToQueue(
                 queue, // requests_queue
