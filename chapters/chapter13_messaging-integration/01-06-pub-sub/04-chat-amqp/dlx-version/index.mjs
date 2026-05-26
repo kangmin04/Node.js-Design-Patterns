@@ -32,7 +32,7 @@ wss.on('connection', async client => {
         console.log('message:', msg.toString()) 
         channel.publish('chat', '', 
             Buffer.from(
-                JSON.stringify({
+                JSON.stringify({ /* 인메모리 객체를 부호화하여 JSON문자열형태로..  */
                     text: msg.toString(), 
                     timestamp: Date.now()
                 })
