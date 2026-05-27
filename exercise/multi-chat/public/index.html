@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Multi-Room Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <h1>Multi-Room Chat</h1>
+        </header>
+        <main class="chat-main">
+            <div class="chat-sidebar">
+                <h3><i class="fas fa-comments"></i> Room Name:</h3>
+                <h2 id="room-name"></h2>
+            </div>
+            <div class="chat-messages">
+                <!-- Messages will be dynamically inserted here -->
+            </div>
+        </main>
+        <div class="chat-form-container">
+            <form id="chat-form">
+                <input
+                    id="msg"
+                    type="text"
+                    placeholder="Enter Message"
+                    required
+                    autocomplete="off"
+                />
+                <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Socket.IO client library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Custom client-side logic -->
+    <script src="main.js"></script>
+</body>
+</html>

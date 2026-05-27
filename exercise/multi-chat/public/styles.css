@@ -1,0 +1,120 @@
+:root {
+    --dark-color-a: #2c3e50; /* Midnight Blue */
+    --dark-color-b: #34495e; /* Wet Asphalt */
+    --light-color: #ecf0f1; /* Clouds */
+    --primary-color: #3498db; /* Peter River */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--light-color);
+    color: #333;
+    line-height: 1.6;
+}
+
+.chat-container {
+    max-width: 900px;
+    background: #fff;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.chat-header {
+    background: var(--dark-color-a);
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.chat-main {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+}
+
+.chat-sidebar {
+    background: var(--dark-color-b);
+    color: #fff;
+    padding: 20px;
+}
+
+.chat-sidebar h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.chat-messages {
+    padding: 30px;
+    height: 500px;
+    overflow-y: scroll;
+}
+
+.chat-messages .message {
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: var(--light-color);
+    border-radius: 5px;
+}
+
+.chat-messages .message .meta {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--dark-color-b);
+    opacity: 0.8;
+    margin-bottom: 7px;
+}
+
+.chat-messages .message .meta span {
+    color: #777;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.chat-form-container {
+    padding: 20px 30px;
+    background-color: var(--dark-color-a);
+}
+
+#chat-form {
+    display: flex;
+}
+
+#chat-form input[type='text'] {
+    flex-grow: 1;
+    font-size: 16px;
+    padding: 10px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn {
+    cursor: pointer;
+    padding: 0 20px;
+    background: var(--primary-color);
+    color: #fff;
+    border: 0;
+    font-size: 17px;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background: #2980b9; /* A darker shade of Peter River */
+}
+
+/* FontAwesome Icons for decoration */
+.fa-comments, .fa-paper-plane {
+    margin-right: 8px;
+}
