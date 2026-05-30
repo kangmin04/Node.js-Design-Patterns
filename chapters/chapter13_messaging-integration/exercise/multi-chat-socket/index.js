@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
+import staticHandler from 'serve-handler'
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'node:fs';
@@ -9,6 +10,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // MIME 타입을 결정하기 위한 맵
+/*
+
 const mimeTypes = {
     '.html': 'text/html',
     '.js': 'text/javascript',
@@ -52,7 +55,12 @@ const requestListener = (req, res) => {
     });
 };
 
-const server = createServer(requestListener);
+*/ 
+
+const server = createServer((req, res) => {
+  return staticHandler(req,res, {public: 'public'})
+});
+
 const io = new Server(server);
 
 io.on('connection', (socket) => {
@@ -82,6 +90,7 @@ io.on('connection', (socket) => {
 
   // 클라이언트로부터 채팅 메시지를 받으면 실행됩니다.
   socket.on('chatMessage', (msg) => {
+    console.log(`Got message: ${msg}`)
     // 메시지를 보낸 클라이언트가 속한 방(room)에만 메시지를 전달합니다.
     io.to(socket.room).emit('message', {
       username: socket.username,
@@ -92,7 +101,7 @@ io.on('connection', (socket) => {
   // 클라이언트의 연결이 끊어졌을 때 실행됩니다.
   socket.on('disconnect', () => {
     if (socket.username) {
-      console.log(`User disconnected: ${socket.id}`);
+      console.log(`User disconnected: ${socket.id}, ${socket.username}`);
       io.to(socket.room).emit('message', {
         username: 'ChatBot',
         text: `${socket.username} has left the chat.`,
