@@ -29,15 +29,15 @@ wss.on('connection', async (client) => {
     }));
 
     client.on('message', msg => {
-        try {
-            // 모든 메시지는 JSON 형식이라고 가정하고 파싱합니다.
-            data = JSON.parse(msg.toString());
-        } catch (error) {
-            console.error('Invalid JSON received, ignoring message:', msg.toString());
-            return;
-        }
+        // try {
+        //     // 모든 메시지는 JSON 형식이라고 가정하고 파싱합니다.
+        //     data = JSON.parse(msg.toString());
+        // } catch (error) {
+        //     console.error('Invalid JSON received, ignoring message:', msg.toString());
+        //     return;
+        // }
 
-        const data =  JSON.parse(msg.toString())
+        // const data =  JSON.parse(msg.toString())
         /* 다른 사용자 방 JOIN 시..  */
 
         // [수정] 채팅 메시지를 저장할 때도 타입을 'CHAT_MESSAGE'로 통일합니다.

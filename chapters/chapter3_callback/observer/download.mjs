@@ -51,7 +51,7 @@ const downloader = download(url, (err, data) => {
     console.log('Downloaded data:', data.toString());
 });
 
-downloader.on('progress', (downloaded, total) => {
+downloader.on('progress', (downloaded, total) => { /* eventemitter return함 -> 바로 eventemitter에서 발행한 progress 이벤트 받을 준비.  */
     console.log(
         `${downloaded}/${total} ` + `(${((downloaded/total) * 100).toFixed(2)}%)`)})
     
