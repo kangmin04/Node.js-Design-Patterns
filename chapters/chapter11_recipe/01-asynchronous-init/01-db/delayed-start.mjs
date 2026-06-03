@@ -5,5 +5,5 @@ async function getConnectedDb(){
 async function getUsers(db){
     await db.query(`SELECT * FROM users`)
 }
-const db = await getConnectedDb(); 
+const connectedDb = await getConnectedDb(); 
 await getUsers(connectedDb)

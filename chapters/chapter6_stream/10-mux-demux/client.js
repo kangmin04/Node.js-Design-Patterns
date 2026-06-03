@@ -5,7 +5,7 @@ import {fork} from 'node:child_process'
 function multiplexChannels(sources ,destination){
     let openSource = sources.length;     
     for (let i = 0 ;i < sources.length ; i++){
-        sources[i]
+        sources[i] /* child.stdout, child.stderr에 대해 non-flow로 read */
         .on('readable' , () => {
             let chunk; 
             while((chunk = sources[i].read()) !==null){  //

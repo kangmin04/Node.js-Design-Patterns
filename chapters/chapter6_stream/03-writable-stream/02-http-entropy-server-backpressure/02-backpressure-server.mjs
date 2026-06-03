@@ -1,3 +1,5 @@
+/* SAME HTTP -entropy-server BUT taking backpressure into account */
+
 import { createServer } from 'node:http'
 import Chance from 'chance' // v1.1.12
 const chance = new Chance()
