@@ -15,6 +15,8 @@ function getAllfactors(n){
     profiler.end(); 
     return factors
 }
+
+
 const myNumber = process.argv[2]
 const myFactors = getAllfactors(myNumber)
 console.log(`Factors of ${myNumber} are: `, myFactors)

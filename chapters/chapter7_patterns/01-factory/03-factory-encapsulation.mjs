@@ -1,3 +1,8 @@
+/*
+  클로져를 활용한 비공개변수 -> 
+  데이터의 변경 또한 공개 인터페이스를 사용하게끔 강제함. 
+*/
+
 function createPerson(name) {
     const privateProperties = {}
   

@@ -17,9 +17,7 @@ superagent
   .then()을하는 순간 실제 HTTP 요청을 함 
  */
 
-
-
-  try {
+try {
     // await 키워드가 superagent 객체의 .then()을 내부적으로 호출하여 요청을 실행합니다.
     const response = await superagent
       .post('https://example.com/api/person')
@@ -76,7 +74,7 @@ superagent
     }
   
     // 이것이 Thenable의 핵심입니다!
-    then(onFulfilled, onRejected) {
+    then(onFulfilled, onRejected) { // JS 엔진이 내부적으로 성공시 결과값 반환하고, 실패시 에러 발생하는 함수를 리턴함. 
       console.log('3. .then()이 호출되어 실제 요청을 시작합니다!');
       
       // 내부적으로 쌓아온 데이터(_url, _data 등)를 사용해 비동기 작업 수행
@@ -116,3 +114,11 @@ superagent
   
   main();
   
+
+  /*
+    async 함수 안에서 await 키워드 만나면 
+    1. then 메서드 확인 
+    2. .then 메서드 호출함. (성공과 실패 함수 전달 )
+    3. .then() 호출 후 async 함수의 실행을 일시중지. 
+    await 했던 객체의 비동기 작업 끝나고, onFulfilled 호출되면, 중지된 async 함수가 재개됨. 
+  */
