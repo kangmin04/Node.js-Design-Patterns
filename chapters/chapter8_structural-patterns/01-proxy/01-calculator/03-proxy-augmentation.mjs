@@ -1,4 +1,4 @@
-import { StackCalculator } from "./proxy-composition.mjs"
+import { StackCalculator } from "./01-proxy-composition.mjs"
 
 /*
     proxy는 원본 객체는 그대로 두고 새로운 wrapper 객체로함. 원본은 절대 수정안한다. 
@@ -9,7 +9,9 @@ import { StackCalculator } from "./proxy-composition.mjs"
 
 function patchToSafeCalculator(calculator) {
     const divideOrig = calculator.divide 
-
+    /* 원본 객체의 기존 메서드를 임시저장 변수에 넣어두고, 원본객체의 메서드를 새함수로 덮어씀! 3. 새 함수내에서 필요시 임시 변수의 원본 메서드를 호출해냄.. 
+      => 원본을 직접 변경함. -> 매우 위험. 
+    */
     calculator.divide = () => {
       const divisor = calculator.peekValue()
       if (divisor === 0) {

@@ -17,7 +17,7 @@ function patchDecorator(calculator){
             throw new Error('Division by 0')
         }
         return divideOrigin.apply(calculator)
-        // return calculator.divide() //아하! infinite recursion..... 
+        // return calculator.divide() //아하! infinite recursion... -> 방지하고자 원본 임시 객체를 만들ㄹ어둔것. 
     }
 
     return calculator

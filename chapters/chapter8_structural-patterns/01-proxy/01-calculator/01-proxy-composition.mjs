@@ -1,7 +1,7 @@
 /*
     COMPOSTION : 
     pros - simple, safe way of creating proxy.
-    cons - manually deledate all the methods. 
+    cons - manually delegate all the methods. 
 */
 
 export class StackCalculator {

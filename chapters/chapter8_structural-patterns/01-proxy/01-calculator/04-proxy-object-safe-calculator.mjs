@@ -1,4 +1,4 @@
-import { StackCalculator } from "./proxy-composition.mjs";
+import { StackCalculator } from "./01-proxy-composition.mjs";
 
 const proxyhandler = {
     get : (target , property) => {
