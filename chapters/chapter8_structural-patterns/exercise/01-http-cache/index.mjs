@@ -5,6 +5,12 @@
     the response is immediately returned from the local cache, 
     rather than being fetched from the remote URL.
 */
+
+/* 서버가 아닌, 현재 코드는 클라이언트 관점. 
+http.request()를 사용하여 서버에 요청을 보내고, 그 응답을 받는 코드. !!! 
+
+-> res는 서버로부터 받는 응답이기에, res.on('data'), res.on('end')를 하는것 !!  
+*/
 import {request} from 'node:https'
 const URL = 'https://jsonplaceholder.typicode.com/todos/1'
 
@@ -33,7 +39,8 @@ function createRequest(url , cb){
         return cb('FROM SERVER' + bodyData)
     })
 })
- req.end(); 
+
+req.end(); 
 
 }
 
