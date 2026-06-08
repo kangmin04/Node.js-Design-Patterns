@@ -4,7 +4,7 @@ export class OfflineState {
     constructor(failsafeSocketInstance){
         this.failsafeSocket = failsafeSocketInstance; 
     }
-
+    /* offline 상태이기에 queue에 넣어두고, online state 시 queue에 있던걸 그제야 send!  */
     send(data){
         this.failsafeSocket.queue.push(data); 
     }

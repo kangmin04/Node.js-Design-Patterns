@@ -16,6 +16,7 @@
 
 // 1. Strategy Interface (개념적)
 // 모든 PaymentStrategy는 'pay' 메서드를 가져야 합니다. //자바에서는 interface로 가능하나 , js 에선 없음 
+/* stub class 생성 후 extends 하여 표현 가능 */
 
 // 2. Concrete Strategies
 class CreditCardStrategy {

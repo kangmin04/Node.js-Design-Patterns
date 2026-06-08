@@ -23,6 +23,6 @@ export class FailsafeSocket {
         this.currentState.activate()
     }
     send(data){
-        this.currentState.send(data); 
+        this.currentState.send(data);  /* offline, online 둘다 동일한 인터페이스의드메서드 사용  */
     }
 }
