@@ -7,6 +7,12 @@ test('getCategory - covers both if and else branches', () => {
   assert.strictEqual(getCategory(5), 'B', 'should cover the else branch');
 });
 
+/* 
+  coverage CLI COMMAND: 
+  node --test --experimental-test-coverage
+
+*/
+
 /*
 # file                                                      | line % | branch % | funcs % | uncovered lines
 # ----------------------------------------------------------------------------------------------------------

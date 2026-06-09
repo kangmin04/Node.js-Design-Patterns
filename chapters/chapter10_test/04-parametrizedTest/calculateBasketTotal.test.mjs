@@ -25,7 +25,7 @@ const cases = [
       expectedTotal: 7,
     },
   ]
-
+  /* for ..of로 배열 순회하면서 하나씩 name, basket, expectedTotal로 ..  */
   for (const {name, basket, expectedTotal} of cases) {
     t.test(name, () => {
         const result = calculateBasketTotal(basket)
