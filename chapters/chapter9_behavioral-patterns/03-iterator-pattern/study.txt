@@ -18,7 +18,7 @@ function createAlphabetIterator() {
 `~~}}
 }
 
-이터레이터 소바
+이터레이터 소비 
 1. 고수준 - for of , ... (전개연산자) 등 사용 
 2. 저수준 - 직접 iterator.next() 호출하고 done여부 체크 
 

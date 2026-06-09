@@ -6,14 +6,15 @@ function createAlphabetIterator() {
 
   return {
     next() {
-      const currChar = String.fromCodePoint(currCode)
+      const currChar = String.fromCodePoint(currCode) /* alphabet char return */
       if (currCode > Z_CHAR_CODE) {
-        return { done: true }
+        return { done: true } // for of 종료 조건 
       }
 
       currCode++
       return { value: currChar, done: false }
     },
+    /* 이터러블(Iterable): 이터레이터를 반환하는 [Symbol.iterator] 메서드를 가진 객체 */
     /* 이터레이터를 이터러블로 만들기위해 이터레이터를 반환하는  [Symbol.iterator] 메서드를 정의함 ->  for of 로 사용 가능  */
     [Symbol.iterator](){
         return this
@@ -38,7 +39,7 @@ console.log(letters)
 ]
 */
 
-
+/* 저수준 방식의 이터러블 사용법!  */
 // const iterator = createAlphabetIterator()
 
 // let iterationResult = iterator.next()
