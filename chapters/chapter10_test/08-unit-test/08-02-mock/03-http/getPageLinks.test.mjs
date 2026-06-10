@@ -35,7 +35,7 @@ suite('getpagelinks' , {concurrency: true, timeout: 500}, async() => {
           get: key =>
             key === 'content-type' ? 'text/html; charset=utf-8' : null,
         },
-        text: async () => mockHtml,
+        text: async () => mockHtml, /* fetch 함수를 mockHtml 리턴 되도록 설정  */
       }))
 
       const links = await getInternalLinks('https://loige.co')
