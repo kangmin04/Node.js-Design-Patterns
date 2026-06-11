@@ -31,6 +31,7 @@ suite('getpagelinks' , {concurrency: true, timeout: 500}, async() => {
       t.mock.method(global, 'fetch', async _url => ({ 
         ok: true,
         status: 200,
+        /* const contentType = response.headers.get('content-type') */
         headers: {
           get: key =>
             key === 'content-type' ? 'text/html; charset=utf-8' : null,
@@ -70,8 +71,8 @@ suite('getpagelinks' , {concurrency: true, timeout: 500}, async() => {
         .intercept({
           path: '/',
           method: 'GET',
-        })
-        .reply(200, mockHtml, {
+        }) 
+        .reply(200, mockHtml, { /* make response with pre-defined mockHtml  */
           headers: {
             'content-type': 'text/html; charset=utf-8',
           },

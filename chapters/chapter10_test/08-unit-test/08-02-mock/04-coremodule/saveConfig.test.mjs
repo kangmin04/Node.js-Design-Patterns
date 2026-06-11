@@ -9,7 +9,7 @@ import { setImmediate } from 'node:timers/promises'
 suite('Save config', {concurrency: false, timeout: 500} , () => {
     test('Creates folder (if needed)', async t => {
         const mockMkdir = mock.fn(); 
-        /* mkdir은 called된건지 track위함 -<> spy */
+        /* mkdir은 called된 걸 track위함 -> spy */
         const mockAccess = mock.fn(async _t => {
             await setImmediate(); 
             throw new Error('ENOENT')
@@ -22,7 +22,7 @@ suite('Save config', {concurrency: false, timeout: 500} , () => {
                 access: mockAccess, 
                 mkdir: mockMkdir, 
                 writeFile: mock.fn()
-                /* write file로 mock 되긴하지만, 현재 테스트에선 대상 아님.  */
+                /* write file도 mock 되긴하지만, 현재 테스트에선 대상 아님.  */
             }
         })
         
