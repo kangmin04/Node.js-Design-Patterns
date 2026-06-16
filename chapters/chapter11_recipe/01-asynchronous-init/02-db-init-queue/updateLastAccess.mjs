@@ -1,6 +1,10 @@
 import {setTimeout} from 'node:timers/promises'; 
 import { db } from './db.mjs';
- db.connect()
+/* 
+    비동기 작업인 db 연결을 동기로! 
+    연결이 안도니 상태에서 query 실행 시 작업 자체를 queue에 넣고, connect되면 해당 queue를 그제서야 실행하는 원리. 
+*/
+db.connect()
 async function updateLastAccess() {
     await db.query(`INSERT (${Date.now()}) INTO "lastAccesses"`)
 }

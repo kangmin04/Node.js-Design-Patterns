@@ -1,13 +1,15 @@
 import {setTimeout} from 'node:timers/promises'; 
 import { db } from './state.mjs';
 db.connect()
-async function updateLastAccess() {
-    await db.query(`INSERT (${Date.now()}) INTO "lastAccesses"`)
+async function updateLastAccess(num) {
+    await db.query(`[${num}]INSERT (${Date.now()}) INTO "lastAccesses"`)
 }
 
-updateLastAccess()
+updateLastAccess(1)
+updateLastAccess(2)
+updateLastAccess(3)
 await setTimeout(600)
-updateLastAccess(); 
+updateLastAccess(4); 
 
 
 

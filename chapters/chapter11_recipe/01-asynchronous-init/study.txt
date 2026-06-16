@@ -19,14 +19,14 @@
                     }
                     await db.query(`SELECT * FROM users`)
                 }
-                **ps1: if를 사실 생략해도됨. 
+                **ps1: if를 사실 생략해도됨. -> 그냥 await db.connected() 이후 바로 await db.query()
                 많은 db는 멱등성을 고려하여 설계됨
                 db.connect() 호출 시 이미 연결되어있다면 즉시 완료된 promise를 반환함. 즉, if 없이 await db.connect() 해도 프로그램엔 전혀 문제 없다. 
                 
                 BUT IF를 사용하는 이유! 
                 - 이벤트 루프 효율성(성능최적화)를 위해서. 
                 await 키워드를 만나면 해당 함수는 잠시 중단되고, 제어권이 이벤트 루프로 감. 
-                비록 db.conenct()가 즉시 ㅡㅍ로미스 반환하더라도 비동기 호출 자체가 마이크로태스크 큐에 등록되는것. 
+                비록 db.conenct()가 즉시 프로미스 반환하더라도 비동기 호출 자체가 마이크로태스크 큐에 등록되는것. 
                 if 사용하면 연결된 경우, await 안만나고 바로 동기적으로 db.query 실행하게됨. 
                 
                 **ps2. query 메서드 자체에 check 로직 넣음. -> consumer에서 provider로 burden 이동시킴 
@@ -126,3 +126,84 @@ Async/await 복습
         mykey ='name'
         obj = {[mykey] : 'Alice'} 이면 obj.name으로 alice 참조가능 
     - symbol도 동일: const deactivate = Symbol('deactivate');
+
+
+실 사용 시! 
+  1. eager init(사전 로드 방식 )
+    - 주기적인 배치성 데이터 / 참조 데이터: API로 가져오는 데이터가 '전체 상품 카테고리 목록', '환율 정보'처럼 자주 변하지 않고 용량이 적당한 마스터 데이터일 때.
+    - 실시간성이 극도로 중요한 서비스: 금융, 실시간 매칭 등 첫 번째 유저의 레이턴시 튀는 현상(Cold Start)조차 허용하기 어려운 경우.
+    - 쿠버네티스(Kubernetes) 환경: Readiness Probe를 통해 외부 API 준비가 끝난 컨테이너에만 트래픽을 안전하게 흘려보낼 수 있는 인프라일 때.
+
+  2. lazy initialization
+    - 트래픽 변동이 심해 빠른 스케일링이 필요한 서비스: 사용자가 몰릴 때 10초 만에 새 서버 컨테이너가 켜져서 대응해야 하는 구조일 때.
+    - 서버리스(Serverless, AWS Lambda 등) 아키텍처: 요청이 올 때만 함수가 실행되는 환경에서는 무조건 Lazy 방식이 강제되며, 효율적입니다.
+    - 해당 외부 API가 핵심 기능이 아닐 때: 우리 서비스의 메인 기능이 아니고, 특정 유저만 가끔 누르는 메뉴(예: 1년에 한 번 쓰는 '과거 이력 정산 API' 등)일 때.
+  
+  3. warm up 방식. (현업에서 둘을 조화하여 절충안으로 사용함)
+    ① 싱글톤 프로미스를 통한 동시성 제어
+      - lazy init의 문제: lazy init으로 진행 할 경우, 서버 켜지자마자 동시에 요청 100개가 들어온다면, isConnected가 true로 변하기 전인 첫 비동기 작업 동안은 전부 isConnected가 false 기에 모든 100개의 요청이 전부 통과되어 외부 API를 100번 호출하게됨. 
+          let isConnected = false; 
+          async function getConnection() {
+            if (!isConnected) {
+              // 외부 API 연결에 1초가 걸린다고 가정
+              await connectToExternalAPI(); 
+              isConnected = true;
+            }
+            return client;
+          }
+      - lazy init 해결책: 연결 완료 여부를 boolean으로 저장하는게 아닌, 연결중인 프로미스 자체를 변수에 캐싱함! 
+        예시 코드 : 
+        //  안전한 싱글톤 프로미스 제어 패턴
+        class ExternalApiService {
+          constructor() {
+            this.initPromise = null; // 연결을 담당할 프로미스를 담을 변수
+            this.client = null;
+          }
+
+          async connect() {
+            // 1. 이미 초기화 프로세스가 진행 중이거나 완료되었다면, 그 프로미스를 그대로 반환
+            if (this.initPromise) {
+              return this.initPromise;
+            }
+
+            // 2. 최초 1회만 프로미스를 생성하여 할당 (싱글톤)
+            this.initPromise = (async () => {
+              console.log(" 외부 API 최초 연결 시도...");
+              this.client = await someExternalApiSdk.initialize({ apiKey: "SECRET" });
+              console.log(" 외부 API 연결 완료!");
+              return this.client;
+            })();
+
+            return this.initPromise;
+          }
+
+          async fetchData(param) {
+            // 요청이 올 때마다 호출하지만, 실제 연결은 최초 1회만 실행됨
+            const client = await this.connect(); 
+            return client.getData(param);
+          }
+        }
+
+        const apiService = new ExternalApiService();
+        ➜ 결론적으로 외부 API는 딱 한번만 호출되고, 100개의 요청은 하나의 프로미스가 resolve 되기를 안전하게 기다린 후 데이터 처리함. 
+    ② Warm-up: 첫 유저가 1초 기다리는 cold start 단점이 존재한다. 이를 해갸ㅕㄹ하고자, 서버가 즉시 켜진 후 사용자 트래픽 유입 전 내부적으로 미리 connect 호출하여 프로미스를 가동해두는 것. 
+      2-1. 애플리케이션 내부에서 서버 listen 하자마자 바로 예열. 
+      예시 코드: 
+        app.get('/data', async (req, res) => {
+          // 싱글톤 프로미스 덕분에 안전함
+          const data = await apiService.fetchData(req.query.id); 
+          res.json(data);
+        });
+
+        app.listen(PORT, () => {
+        console.log(` Server is running on port ${PORT}`);
+        
+        // 웜업(Warm-up) 시작: 비동기로 미리 깨워둡니다. (await를 붙이지 않음)
+        apiService.connect()
+          .then(() => console.log("🚀 백그라운드 웜업 성공! 이제 첫 유저도 빠릅니다."))
+          .catch((err) => console.error("🚨 웜업 실패 (런타임 중 재시도 가능):", err));
+      });
+
+      2-2. Health Check 방식의 외부 인프라. 
+        - 쿠버네티스나 aws ec2, consul 등에서 사용하는 가장 추천하는 현업 표준 방식.
+        - 서버 내부에 /health, /ready 라는 경로 만들고 엄업 후 200 OK 반환하게 함. 

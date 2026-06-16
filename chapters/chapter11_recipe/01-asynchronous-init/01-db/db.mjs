@@ -10,7 +10,7 @@ class Database {
             if(this.#pendingConnection){
                 return this.#pendingConnection; 
             }
-
+            
             this.#pendingConnection = setTimeout(500); 
             await this.#pendingConnection; 
             this.connected = true; 

@@ -18,7 +18,7 @@ class Database {
             
             while(this.commandsQueue.length > 0){
                 const command = this.commandsQueue.shift(); 
-                    command(); 
+                command(); 
               
             }
         }             

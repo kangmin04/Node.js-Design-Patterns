@@ -24,4 +24,3 @@ export async function createTables(db) {
     CREATE TABLE 시 column 나열할 때 마지막 건 콤마 없어 해야함! 안그러면 syntax err
 */
 
-/* 2nd for git tests.  */
