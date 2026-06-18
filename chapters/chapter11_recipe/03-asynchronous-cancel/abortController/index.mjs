@@ -23,7 +23,7 @@ async function cancelable(abortSignal){
 const ac = new AbortController()
 
 setTimeout(() => {
-    ac.abort(); //trigger cancellation.  인자로 Error 객체주면 해당 에러로 나옴. Default는 'AbortError' 
+    ac.abort(); //trigger cancellation.  인자로 Error 객체주면 해당 에러로 나옴. Default는 'AbortError' -> catch문에서 err이 'AbortError' 시 의도된 정지임 ! 
 }, 100); 
 
 try {

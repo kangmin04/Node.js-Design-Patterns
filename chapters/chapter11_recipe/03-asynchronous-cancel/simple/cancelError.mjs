@@ -4,3 +4,4 @@ export class CancelError extends Error {
       this.isCanceled = true
     }
   }
+  

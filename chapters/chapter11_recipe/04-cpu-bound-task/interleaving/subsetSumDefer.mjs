@@ -1,3 +1,13 @@
+/*
+    인터리빙 방식! 
+    원리: 거대한 재귀 루프나 루프 블록 단계마다 setImmediate()를 끼워 넣음
+    코드 특징: 연산을 한 단계 진행한 후 다음 단계로 넘어가기 전에 setImmediate(() => this._run(...)) 형태로 제어권을 이벤트 루프에 한 번 양보(Yield)함. 
+    실무적 의의: 새로운 프로세스나 스레드를 생성하는 오버헤드가 전혀 없으므로 리소스가 매우 절약된다. 
+              연산이 도는 중에도 서버가 다른 유저의 간단한 요청(예: 로그인, 헬스체크)을 중간중간 처리(Interleaving)해 줄 수 있게 됨.
+              다만, 전체 연산 완료 시간 자체는 대기 시간 때문에 오히려 늘어납니다.
+*/
+
+
 import {EventEmitter} from 'node:events'
 
 export class SubsetSum extends EventEmitter {

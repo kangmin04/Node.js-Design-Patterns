@@ -1,0 +1,75 @@
+1. AbortController 사용 사례(실무에서)? 
+    - 유저가 마음을 바꿨거나(페이지이탈, 검색어변경, 작업 취소 시), timeout 등의 경우에서 서버와 클라이언트의 자원 낭비를 방지하는 스위치임! 
+    1-1. 검색어 자동완성: 
+        - 문제: 사용자가 a-> ab -> abc로 바르게 입력한다면, 총 3번의 API 요청이 날아가게됨. 
+          만약 ab 검색 결과가 서버 부하로 가장 늦게 응답된다면 화면에는 최종 검색 결과인 abc의 값이 아닌, ab의 값이 노출되는 버그가 생긴다. 
+        - 해결: 새로운 요청 보내기 직전, 이전 요청의 abortController 실행하여 기존 네트워크 요청을 취소해버림! 
+        - 코드예시: 
+                let currentController = null;
+                async function handleSearchInput(keyword) {
+                // 1. 이전에 진행 중이던 요청이 있다면 취소
+                if (currentController) {
+                    currentController.abort(); 
+                }
+
+                // 2. 새 요청을 위한 컨트롤러 생성
+                currentController = new AbortController();
+                const { signal } = currentController;
+
+                try {
+                    const response = await fetch(`/api/search?q=${keyword}`, { signal });
+                    const data = await response.json();
+                    renderDOM(data);
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                    console.log('이전 검색 요청이 취소되었습니다.');
+                    } else {
+                    console.error('실제 에러 발생:', error);
+                    }
+                }
+                }
+
+    1-2. 네트워크 요청 타임아웃 처리: 
+        - 문제: 기존 fetch APIsms Axios와 달리 자체 timeout 옵션이 없음. 
+        - 해결 코드: 
+            async function fetchWithTimeout(url, ms) {
+                try {
+                    // 지정된 밀리초(ms) 후에 자동으로 abort 신호를 발생시키는 시그널 생성
+                    const response = await fetch(url, { signal: AbortSignal.timeout(ms) });
+                    return await response.json();
+                } catch (error) {
+                    if (error.name === 'TimeoutError') {
+                    console.error(`${ms}ms 시간이 초과되어 요청이 취소되었습니다.`);
+                    }
+                    throw error;
+                }
+            }
+
+            // 2초 안에 응답 안 오면 취소
+            await fetchWithTimeout('/api/heavy-data', 2000);
+
+    1-3. 대용량 파일 업로드/다운로드 시 취소 버튼 
+        - 문제: 사용자가 수백 메가바이트짜리 영상 파일을 업로드하다가 가만 보니 파일을 잘못 선택해서 [취소] 버튼누르는 경우. 
+        - 해결 코드: 
+            const controller = new AbortController();
+            // 업로드 시작
+            async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('video', file);
+
+            try {
+                await axios.post('/api/upload', formData, {
+                signal: controller.signal // Axios도 AbortController 시그널을 완벽히 지원합니다.
+                });
+                alert('업로드 완료!');
+            } catch (error) {
+                if (axios.isCancel(error)) {
+                console.log('유저가 업로드를 중단했습니다.');
+                }
+            }
+            }
+
+            // 취소 버튼 클릭 시
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+            controller.abort();
+            });
