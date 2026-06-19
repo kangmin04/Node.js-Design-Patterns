@@ -10,6 +10,7 @@ const inFlight = new Map();    // "진행 중"인 계산과 대기열을 관리
  * @param {string} product - 계산할 제품 이름
  * @param {function} callback - 최종 사용자(서버)가 제공한 콜백
  */
+
 export function totalSalesWrapper(product, callback) { 
   // 1. 캐시 확인 (가장 빠른 경로)
   if (cache.has(product)) {

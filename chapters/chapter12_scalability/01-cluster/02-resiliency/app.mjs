@@ -20,7 +20,7 @@ if(cluster.isPrimary){
 
     setInterval(
         () => {
-            if(Math.random() < 0.2){
+            if(Math.random() < 0.1){
                 throw new Error(`Ops.. ${process.pid} crashed`)
             }
         }, Math.ceil(Math.random() * 3) * 1000)

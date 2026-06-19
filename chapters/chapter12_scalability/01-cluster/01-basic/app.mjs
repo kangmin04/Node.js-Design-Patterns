@@ -19,7 +19,7 @@ if(cluster.isPrimary){
     }, 3000);
 
 
-}else{ /* 각 워커는 different Nodejs process with its own event loop, memory space, and loaded moduels */
+}else{ /* 각 워커는 different Nodejs process with its own event loop, memory space, and loaded modules */
 
     // 워커가 Primary로부터 메시지를 수신하는 리스너
     process.on('message', (msg) => {
