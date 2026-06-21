@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grpc/grpc-js": "^1.14.4",
+    "@grpc/proto-loader": "^0.8.1",
     "amqplib": "^1.0.5",
     "ansi-styles": "^6.2.3",
     "axios": "^1.13.2",
@@ -19,7 +21,7 @@
     "commander": "^14.0.2",
     "csv-parse": "^6.1.0",
     "ejs": "^3.1.9",
-    "express": "^4.21.2",
+    "express": "^4.22.2",
     "fastify": "^5.8.2",
     "htmlparser2": "^10.1.0",
     "httpxy": "^0.5.0",
