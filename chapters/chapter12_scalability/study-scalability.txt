@@ -690,7 +690,7 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
      shared db면 서비스 구현은 쉽지만, 서비스 간 coupling이 생기고 여러 application을 돌리는 것의 강점이 사라짐. 
      
     Microservice advantage
-     - 수정이 필요한 경우에도, 서비스 전체가 아닌ㄴ 해당 서비스만 변경하면됨 -> 간편. 
+     - 수정이 필요한 경우에도, 서비스 전체가 아닌 해당 서비스만 변경하면됨 -> 간편. 
      - resuability. 
      
     Microservice disadvantage
@@ -709,18 +709,18 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
             - 다만, 여러 서비스를 하나로 묶어주는 구조적인 역할만 할 뿐, 데이터의 의미를 이해하고 가공하는 로직은 없음(non semantic) 
         2. API Orchestration
             - store frontend application 
-              
-              API Orchestration layer (completeCheckout(), cancelCheckout(), addToCart() 등 ... )
-                
-                
-
+                 |
+                 |
+              API Orchestration layer (completeCheckout(), cancelCheckout(), addToCart() 등 ... )                                
+                 |                              |                      |
+                 |                              |                      |
               checkout-service             cart-service          product-service
 
               으로 application 나누고, 
               frontend 단에서 checkout 요청 시 
               1. api Orchestration layer에서 checkoutService/pay 형태로 REST API 호출하여 transaction 실행
-              2. payment 성공한 경우, cart에서 구매한 아이템을 제거 해야하기에 cartService/delete 호출하여 아이템 제거. 
-              3. 이후 product의 availability도 변경해줘야 하기에 productService/update 호출하여 제품 목록 변경. 
+              2. payment 성공한 경우, cart에서 구매한 아이템을 제거 해야하기에 cartService/delete 호출하여 아이템 제거. (gRPC)
+              3. 이후 product의 availability도 변경해줘야 하기에 productService/update 호출하여 제품 목록 변경. (gRPC)
 
             - orchestrator은 흐름만 제어하고, 실제 비즈니스 로직은 각 마이크로서비스가 알아서 처리함.
 
@@ -728,13 +728,13 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
             - store frontend와 decouple됨. 
             - api Orchestration은 semantic integration을 함!   
             (API 프록시: "클라이언트가 /products를 요청했네? products-service로 그대로 전달해줘야지." (단순 중계, Structural Integration)
-             API 오케스트레이션: "클라이언트가 '주문 상세 정보'를 요청했네? 알았어, 내가 ①orders-service에서 주문 정보를 가져오고, ②그 주문에 포함된 상품 ID로 products-service에 상품 정보를 물어본 다음, ③두 정보를 예쁘게 합쳐서 한 번에 줄게." (의미를 이해하고 조합, Semantic Integration))
+             API 오케스트레이션: "클라이언트가 '주문 상세 정보'를 요청했네? 알았어, 내가 ① orders-service에서 주문 정보를 가져오고, ② 그 주문에 포함된 상품 ID로 products-service에 상품 정보를 물어본 다음, ③ 두 정보를 예쁘게 합쳐서 한 번에 줄게." (의미를 이해하고 조합, Semantic Integration))
             - 여러 서비스를 거치는데, api orchestrator로 명확하게 파악 및 관리 가능. 
             - 쉽게 design, debug, scale 가능함
 
             단점: 
             - 구조와 서비스가 어떻게 진행되는지에대한, complete knowledge가 필요함. 
-            - god object 처럼 한 객체가 tpp much work를 해서 high coupling, low cohension, high complexity를 초래하는 상황 발생할수있다. 
+            - god object 처럼 한 객체가 too much work를 해서 high coupling, low cohension, high complexity를 초래하는 상황 발생할수있다. 
 
             MSA 관련 추가 자료(BFF) : 
             - 만약, 각 frontend가 distinct requirement를 가질경우(다른 디바이스 간 ..(모바일, PC, 워치끼린 제공하는 데이터 형태가 달라야할수도있음)) -> BFF 패턴. (Backend for Frontend)
@@ -751,7 +751,7 @@ BUT 워커가 종속적인 스레드면 한 워커에서 오류가 생기면 다
             4. 브로커가 구독자 목록을 확인함. cart-service가 이전에 브로커에게 order_events토픽을 구독 신청했음 
                Notification-service도 order_events 토픽을 구독 신청했습니다. (이유: 고객에게 '주문 완료' 이메일을 보내야 하므로)
                Product-service는 이 토픽에 관심이 없어서 구독 신청을 하지 않았습니다.
-            5. 브로커가 cart-service와 Notification-service 두 곳 모두에게 메시지르 ㄹ전달함. 
+            5. 브로커가 cart-service와 Notification-service 두 곳 모두에게 메시지를 전달함. 
             product-service에겐 전파안함. 
 
             - decouple됨!! 

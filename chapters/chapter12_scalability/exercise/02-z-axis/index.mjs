@@ -9,9 +9,16 @@
 
 import { createServer } from "node:http";
 import { dataInit } from "./fakeDataMaker.mjs";
-import AtoD from './AtoD.json' with { type: 'json' };
-import EtoP from './EtoP.json' with { type: 'json' };
-import QtoZ from './QtoZ.json' with { type: 'json' };
+// import AtoD from './AtoD.json' with { type: 'json' };
+// import EtoP from './EtoP.json' with { type: 'json' };
+// import QtoZ from './QtoZ.json' with { type: 'json' };
+
+import fs from 'node:fs';
+
+const AtoD = JSON.parse(fs.readFileSync(new URL('./AtoD.json', import.meta.url), 'utf8'));
+const EtoP = JSON.parse(fs.readFileSync(new URL('./EtoP.json', import.meta.url), 'utf8'));
+const QtoZ = JSON.parse(fs.readFileSync(new URL('./QtoZ.json', import.meta.url), 'utf8'));
+
 // const initTF = await dataInit(); 
 // if(!initTF){
 //     console.log('data prep went wrong.')

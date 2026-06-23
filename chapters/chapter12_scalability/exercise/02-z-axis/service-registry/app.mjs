@@ -4,9 +4,15 @@ import portfinder from 'portfinder' // v1.0.37
 import { ConsulClient } from './consul.mjs'
 
 /* JSON 배열 형식!! -> 즉, 바로 배열로 사용 가능.  */
-import AtoD from './AtoD.json' with { type: 'json' };
-import EtoP from './EtoP.json' with { type: 'json' };
-import QtoZ from './QtoZ.json' with { type: 'json' };
+// import AtoD from './AtoD.json' with { type: 'json' };
+// import EtoP from './EtoP.json' with { type: 'json' };
+// import QtoZ from './QtoZ.json' with { type: 'json' };
+
+import fs from 'node:fs';
+
+const AtoD = JSON.parse(fs.readFileSync(new URL('./AtoD.json', import.meta.url), 'utf8'));
+const EtoP = JSON.parse(fs.readFileSync(new URL('./EtoP.json', import.meta.url), 'utf8'));
+const QtoZ = JSON.parse(fs.readFileSync(new URL('./QtoZ.json', import.meta.url), 'utf8'));
 
 const serviceType = process.argv[2] //'A-D' OR 'E-P' OR 'Q-Z'
 if (!serviceType) {
