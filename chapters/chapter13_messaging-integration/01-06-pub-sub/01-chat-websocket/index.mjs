@@ -1,3 +1,5 @@
+/* WEBSOCKET만 사용한 version */
+
 import { createServer } from "node:http";
 import {WebSocketServer} from 'ws'
 import staticHandler from 'serve-handler'
