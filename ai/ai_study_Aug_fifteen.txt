@@ -1,0 +1,2 @@
+studied on bias and high variance. 
+How to select good model for linear regression and etc. 
