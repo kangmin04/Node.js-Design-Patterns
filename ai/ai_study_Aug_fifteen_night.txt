@@ -1,0 +1,6 @@
+high bias, variance의 high 기준에 대해 공부함. 
+high한 경우의 대처법을 알아봄. 
+
+machine learning의 iteration loop 공부함. 
+choose model -> train -> diagnostic인데 진단 시 진단요소들 (bias, variance, error analysis) 공부함. 
+error analysis 토대로 data feature add 방법 및 transfer learning과 finetune 과정 공부함. 
