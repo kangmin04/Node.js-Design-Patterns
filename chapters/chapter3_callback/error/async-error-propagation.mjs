@@ -30,7 +30,7 @@ const level2_readFile = async (filename) => {
   } catch (err) {
     console.log(" (L2) 하위 레벨(파일 읽기 또는 L3 파싱)에서 에러가 전파된 것을 감지했습니다.");
     // 에러에 추가적인 컨텍스트를 더해 새로운 에러를 만들어 던집니다.
-    throw new Error(`(L2) 파일 "${filename}" 처리 중 문제 발생: ${err.message}`);
+    throw new Error(`(L2) 파일 "${filename}" 처리 중 문제 발생: ${err.message}`, { cause: err });
   }
 };
 

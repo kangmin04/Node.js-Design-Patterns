@@ -19,7 +19,7 @@ const level3_parseData = (rawData, callback) => {
 // LEVEL 2: 파일 처리 (Callback Style)
 // 이 함수는 파일 이름과 상위 레벨의 콜백 함수를 인자로 받습니다.
 const level2_readFileAndParse = (filename, callback) => {
-  console.log(` (L2) 콜백 방식으로 \"${filename}\" 파일을 읽습니다...`);
+  console.log(` (L2) 콜백 방식으로 "${filename}" 파일을 읽습니다...`);
   
   // fs.readFile은 대표적인 콜백 기반 비동기 함수입니다.
   readFile(filename, 'utf-8', (readErr, rawData) => {

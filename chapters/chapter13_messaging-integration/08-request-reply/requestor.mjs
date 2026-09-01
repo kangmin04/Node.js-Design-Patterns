@@ -12,7 +12,7 @@ try{
     const p2 = request({a: 6, b: 1, delay: 100}).then(res => console.log(`Reply: 6 + 1 = ${res.sum}`))
     await Promise.all([p1, p2])
 }catch(err){
-
+    // 에러는 무시 - 자식 프로세스 정리는 finally에서 처리
 }finally{
     channel.disconnect() /* make child-process to exit gracefully */
 }

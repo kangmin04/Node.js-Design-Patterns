@@ -31,7 +31,7 @@ const level2_readFile = (filename) => {
     console.log(" (L2) 하위 레벨(L3)에서 에러가 전파된 것을 감지했습니다.");
     // 에러를 그냥 다시 던지지 않고, 어떤 파일에서 문제가 생겼는지
     // 컨텍스트를 추가하여 새로운 에러를 만들어 던집니다.
-    throw new Error(`(L2) 파일 "${filename}" 처리 중 문제 발생: ${err.message}`);
+    throw new Error(`(L2) 파일 "${filename}" 처리 중 문제 발생: ${err.message}`, { cause: err });
   }
 };
 

@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "skill": "cartography",
+    "rubricVersion": "ai-ready-codebase-v2",
+    "repoName": "Node.js-Design-Patterns",
+    "repoPath": "/Users/kangmin/Desktop/personal-study/Node.js-Design-Pattern/Node.js-Design-Patterns",
+    "commit": "9219d4b1531ebb00424a814b769ad68e7433e322",
+    "auditedAt": "2026-09-01T00:00:00Z",
+    "auditor": "Claude Code"
+  },
+  "totalScore": 26,
+  "maxScore": 100,
+  "tier": {
+    "chip": "CRITICAL",
+    "label": "구두 지식 의존도가 높음 — 에이전트 투입 전 정비 필요",
+    "status": "critical"
+  },
+  "previousScore": null,
+  "delta": null,
+  "categories": [
+    {
+      "code": "A",
+      "name": "Navigation",
+      "description": "에이전트가 이 레포에 처음 들어왔을 때 길을 잃지 않는가",
+      "maxPoints": 15,
+      "earnedPoints": 2,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "A1",
+          "description": "최상위 진입점 (README/CLAUDE.md 등)",
+          "maxPoints": 6,
+          "earnedPoints": 0,
+          "evidence": "README.md 전체 내용이 'Node + Express Service Starter... hello world express.js server'로, 실제로는 「Node.js Design Patterns」 책 학습 코드 저장소인 이 레포와 무관한 초기 스캐폴딩 문구다. 이 레포가 무엇을 학습하는 곳인지, chapters/ 아래를 어떻게 읽어야 하는지 설명이 전혀 없다.",
+          "gap": "README.md 최상단에 '이 레포는 「Node.js Design Patterns」 책을 학습하며 작성한 예제/연습 코드 모음이다', 'chapters/chapterN_주제 순서로 읽으면 된다' 같은 개요가 필요하다.",
+          "confidence": ""
+        },
+        {
+          "id": "A2",
+          "description": "디렉토리 구조 설명",
+          "maxPoints": 5,
+          "earnedPoints": 0,
+          "evidence": "chapters/ 아래 14개 디렉토리(chapter2_module ~ chapter13_messaging-integration, jsBasic) 중 무엇이 무엇을 다루는지 설명하는 표/트리/산문이 레포 어디에도 없다. GEMINI.md는 MVC(controllers/services/models) 구조를 언급하지만 실제 레포에는 그런 디렉토리가 존재하지 않는다.",
+          "gap": "루트 문서에 chapters/ 하위 14개 디렉토리를 책의 장 제목과 매핑한 표 추가 필요.",
+          "confidence": ""
+        },
+        {
+          "id": "A3",
+          "description": "네이밍의 자기설명성·일관성",
+          "maxPoints": 4,
+          "earnedPoints": 2,
+          "evidence": "chapter 레벨 이름(chapterN_주제)은 일관적이다. 다만 하위 예제 폴더 네이밍은 뒤섞여 있다: 번호 있는 형태(chapters/chapter7_patterns/01-factory), 번호 없는 형태(chapters/chapter9_behavioral-patterns/command-pattern, .../middleware), 공백이 섞인 오탈자 형태(chapters/chapter6_stream/02-readable-stream/'01- gzip')가 공존한다.",
+          "gap": "'01- gzip' 같은 공백 포함 폴더명 정리, command-pattern/middleware처럼 번호 없는 폴더를 다른 챕터와 동일한 NN- 접두사 규칙으로 통일하면 개선됨(단, 기존 코드 폴더명 변경은 사용자 승인 후 진행 필요).",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "B",
+      "name": "Context Quality",
+      "description": "에이전트용 가이드 문서가 실제로 정확하고 밀도 있는가",
+      "maxPoints": 20,
+      "earnedPoints": 2,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "B1",
+          "description": "에이전트 가이드 존재",
+          "maxPoints": 4,
+          "earnedPoints": 1,
+          "evidence": "GEMINI.md가 루트에 존재한다. 다만 이는 'Node.js + Express 백엔드 API 프로젝트'를 위한 범용 페르소나/가이드 템플릿이며 이 레포의 실제 내용(디자인 패턴 학습 코드)과 무관하다. CLAUDE.md/AGENTS.md/.cursorrules는 없음.",
+          "gap": "GEMINI.md를 이 레포 실제 내용에 맞게 재작성하거나, 이 레포용 CLAUDE.md를 새로 추가 필요.",
+          "confidence": ""
+        },
+        {
+          "id": "B2",
+          "description": "정확성 (drift 없음)",
+          "maxPoints": 6,
+          "earnedPoints": 0,
+          "evidence": "GEMINI.md는 helmet, rate limiting, controllers/services/models 분리, Gemini SDK 연동 등을 설명하지만 package.json 어디에도 helmet/express-rate-limit 의존성이 없고, 그런 디렉토리 구조도 존재하지 않는다. 완전히 다른 프로젝트를 가정한 문서다.",
+          "gap": "문서 내용을 실제 package.json 의존성·실제 디렉토리 구조와 일치시켜야 함.",
+          "confidence": ""
+        },
+        {
+          "id": "B3",
+          "description": "'왜'의 설명",
+          "maxPoints": 6,
+          "earnedPoints": 1,
+          "evidence": "chapters/chapter10_test/study.txt 등 일부 study.txt 파일은 SUT, AAA 패턴, 커버리지의 함정('높은 커버리지가 높은 품질을 보장하지 않는다') 같은 개념적 '왜'를 담고 있다. 하지만 이는 14개 챕터 중 5~6개에만 존재하고(chapter2,3,4,5,6,7 등에는 study 노트 없음), 레포 구조 자체에 대한 '왜 이렇게 구성했는가'는 어디에도 없다.",
+          "gap": "study 노트가 없는 챕터(2,3,4,5,6,7)에 대한 보강, 그리고 레포 상위 구조에 대한 설계 의도 문서화 필요.",
+          "confidence": ""
+        },
+        {
+          "id": "B4",
+          "description": "개발 컨벤션 명시",
+          "maxPoints": 4,
+          "earnedPoints": 0,
+          "evidence": "코딩 스타일, 커밋 메시지 규칙(git log 상 'Feat.', 'Review', 'Chore.' 접두사를 실제로 쓰고 있으나 문서화되어 있지 않음), 테스트 작성 규칙을 명시한 문서가 없다.",
+          "gap": "커밋 메시지 접두사 규칙(Feat./Review/Chore 등 이미 쓰고 있는 관례)만이라도 CONTRIBUTING 혹은 루트 문서에 짧게 명문화하면 충족.",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "C",
+      "name": "Tribal Knowledge",
+      "description": "팀 머릿속에만 있던 지식이 문서로 외화됐는가",
+      "maxPoints": 20,
+      "earnedPoints": 3,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "C1",
+          "description": "알려진 제약/한계",
+          "maxPoints": 5,
+          "earnedPoints": 0,
+          "evidence": "'이 예제는 아직 미완성', '이 라이브러리는 버그 있음' 류의 known-limitations 섹션이 어느 study.txt/README에도 없다.",
+          "gap": "챕터별 known-limitations 섹션 추가 여지.",
+          "confidence": ""
+        },
+        {
+          "id": "C2",
+          "description": "설계 히스토리/의사결정 배경",
+          "maxPoints": 5,
+          "earnedPoints": 0,
+          "evidence": "git log에 'Review chapter12', 'Feat. implement gRPC for internal MSA communication. Also Reviewing till p2p-Load-Balancing' 같은 커밋 메시지로만 학습 진행 히스토리가 남아있고, 문서화된 결정 배경은 없다.",
+          "gap": "git log로만 추적 가능한 수준 — 별도 문서화 없음.",
+          "confidence": ""
+        },
+        {
+          "id": "C3",
+          "description": "흔한 함정/트러블슈팅",
+          "maxPoints": 5,
+          "earnedPoints": 2,
+          "evidence": "chapters/chapter12_scalability/docker-study.txt, k8s-study.txt, study-scalability.txt처럼 특정 챕터에는 트러블슈팅성 학습 노트가 존재한다. 하지만 형식이 .txt/.md로 혼재되어 있고 14개 챕터 중 일부(약 6개)에만 존재하며 색인이 없어 에이전트가 찾으려면 전체를 훑어야 한다.",
+          "gap": "노트 형식을 .md로 통일하고 챕터별 존재 여부를 루트 문서에서 색인화하면 개선.",
+          "confidence": ""
+        },
+        {
+          "id": "C4",
+          "description": "도메인 용어집",
+          "maxPoints": 5,
+          "earnedPoints": 1,
+          "evidence": "study.txt 안에 SUT, AAA, Stub/Spy 같은 용어가 산발적으로 정의돼 있으나, 책 고유 용어(revealing constructor, mux/demux, z-axis scaling 등)는 코드 폴더명으로만 존재하고 별도 정의가 없다.",
+          "gap": "중앙 용어집(GLOSSARY.md) 부재.",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "D",
+      "name": "Dependency Mapping",
+      "description": "모듈 의존 구조가 에이전트가 안전하게 수정할 수 있을 만큼 명확한가",
+      "maxPoints": 15,
+      "earnedPoints": 12,
+      "status": "good",
+      "criteria": [
+        {
+          "id": "D1",
+          "description": "순환 의존 부재",
+          "maxPoints": 6,
+          "earnedPoints": 5,
+          "evidence": "madge 등 정적 분석 도구가 devDependencies에 없어 설치하지 않고, `grep -rIn \"from '\\.\\./\\.\\./\\.\\./\"` 로 챕터 간 3단계 이상 상위 참조를 샘플링한 결과 0건 — 각 예제 폴더가 서로 참조하지 않는 독립 스크립트 구조.",
+          "gap": "정적 분석 도구 없이 샘플링으로만 확인했다는 한계는 있음.",
+          "confidence": ""
+        },
+        {
+          "id": "D2",
+          "description": "God file 부재",
+          "maxPoints": 5,
+          "earnedPoints": 4,
+          "evidence": "`wc -l` 상위 목록에서 최대 파일이 chapters/chapter9_behavioral-patterns/command-pattern/command-undo-queue-example.js(146줄)로, 500줄 기준을 크게 밑돈다.",
+          "gap": "",
+          "confidence": ""
+        },
+        {
+          "id": "D3",
+          "description": "모듈 경계·인터페이스 명시성",
+          "maxPoints": 4,
+          "earnedPoints": 3,
+          "evidence": "각 폴더가 하나의 패턴/개념 단위로 자연스럽게 분리돼 있어 경계가 물리적으로 명확하다(예: chapter8_structural-patterns/01-proxy, 02-decorator, 03-adapter). 다만 이는 학습용 독립 스크립트 구조라서 애초에 공개 API/내부 구현 구분이라는 개념 자체가 약하게 적용된다.",
+          "gap": "라이브러리형 모듈이 아니므로 구조적 한계로 봐야 함 — 감점 사유는 아니지만 만점은 아님.",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "E",
+      "name": "Verification Gates",
+      "description": "에이전트가 만든 변경이 맞는지 틀린지 자동으로 검증할 수 있는가",
+      "maxPoints": 15,
+      "earnedPoints": 3,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "E1",
+          "description": "자동화 테스트",
+          "maxPoints": 6,
+          "earnedPoints": 1,
+          "evidence": "chapters/chapter10_test/ 안에 node:test 기반 *.test.mjs 파일이 다수 존재하지만, 이는 '테스트 작성법'을 학습하는 챕터의 예제 코드 자체이지 다른 13개 챕터(2,3,4,5,6,7,8,9,11,12,13,jsBasic)의 코드를 검증하는 테스트가 아니다. 레포 전체를 실행할 수 있는 루트 `npm test` 스크립트도 package.json에 없다.",
+          "gap": "루트 package.json에 `npm test`로 chapter10_test 하위 *.test.mjs를 일괄 실행하는 스크립트 추가 여지(단, 다른 챕터용 테스트 추가는 학습 목적상 범위 밖일 수 있음).",
+          "confidence": ""
+        },
+        {
+          "id": "E2",
+          "description": "린트/타입체크",
+          "maxPoints": 5,
+          "earnedPoints": 0,
+          "evidence": "`.eslintrc*`, `.prettierrc*` 등 설정 파일이 레포 어디에도 없고, package.json scripts에도 lint/typecheck 항목이 없다.",
+          "gap": "ESLint 설정과 `npm run lint` 스크립트 추가 여지.",
+          "confidence": ""
+        },
+        {
+          "id": "E3",
+          "description": "CI 파이프라인 신뢰도",
+          "maxPoints": 4,
+          "earnedPoints": 2,
+          "evidence": ".github/workflows/playwright.yml이 존재하고 push/PR 시 `npx playwright test`를 실행한다. 다만 Playwright 스펙은 chapters/chapter10_test/10-e2e-test/tests/ 2개 파일뿐이라 CI가 검증하는 범위가 레포 전체가 아니라 한 하위 챕터의 e2e 예제로 국한된다.",
+          "gap": "CI 범위가 매우 좁음 — 나머지 챕터의 node:test 스위트는 CI에 포함되어 있지 않음.",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "F",
+      "name": "Freshness",
+      "description": "문서와 코드 사이에 drift가 없는가, 마지막으로 언제 손봤는가",
+      "maxPoints": 10,
+      "earnedPoints": 3,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "F1",
+          "description": "문서·코드 최신성 격차",
+          "maxPoints": 5,
+          "earnedPoints": 1,
+          "evidence": "git 커밋 이력은 2025-11-22부터 2026-06-27까지 245개 커밋으로 chapters/ 아래를 꾸준히 갱신했지만, README.md와 GEMINI.md는 최초 스캐폴딩 상태(IDX 템플릿) 그대로 방치되어 실질 내용과 처음부터 맞지 않았고 그 뒤로도 갱신된 흔적이 없다.",
+          "gap": "7개월간 코드는 계속 늘었는데 루트 문서는 정적 템플릿 그대로 — 격차가 시간이 지날수록 벌어지는 구조.",
+          "confidence": ""
+        },
+        {
+          "id": "F2",
+          "description": "죽은 링크/방치된 TODO/deprecated 잔존",
+          "maxPoints": 5,
+          "earnedPoints": 2,
+          "evidence": "`grep -rn \"TODO\\|FIXME\"` 결과 chapters/ 전체에서 0건으로 방치된 TODO는 없다. 다만 GEMINI.md가 설명하는 helmet/rate-limiting/MVC 구조 자체가 이 레포에 존재한 적 없는 '가상의 deprecated 구조'처럼 기능해 사실상 죽은 문서 역할을 한다.",
+          "gap": "TODO/FIXME는 깨끗하지만, GEMINI.md 전체가 실질적으로 무효한 문서.",
+          "confidence": ""
+        }
+      ]
+    },
+    {
+      "code": "G",
+      "name": "Agent Outcomes",
+      "description": "A~F 입력이 실제 에이전트 세션의 성공으로 이어지는가 (결과 측 추정)",
+      "maxPoints": 5,
+      "earnedPoints": 1,
+      "status": "critical",
+      "criteria": [
+        {
+          "id": "G1",
+          "description": "결과 프록시",
+          "maxPoints": 5,
+          "earnedPoints": 1,
+          "evidence": "직접적인 에이전트 세션 로그는 없음. git log -50 샘플링에서 'revert'나 '에이전트가 잘못 만든 걸 고침' 류 패턴은 보이지 않지만(개인 학습 커밋이라 해당 없음), A~F 카테고리 가중 평균(25/95 ≈ 26%)으로 대체 추정.",
+          "gap": "직접 관측 불가 — A~F 대비 추정치.",
+          "confidence": "low"
+        }
+      ]
+    }
+  ],
+  "actionList": [
+    {
+      "rank": 1,
+      "category": "B",
+      "action": "GEMINI.md를 이 레포 실제 내용(Node.js Design Patterns 책 학습 코드, chapters/chapterN_주제 구조)에 맞게 재작성 — helmet/rate-limiting/MVC 등 무관한 Express API 가이드 내용 제거",
+      "rationale": "현재 GEMINI.md는 실제 존재하지 않는 프로젝트를 설명해 에이전트에게 잘못된 사전지식을 주입한다(B1, B2 0점 근거).",
+      "impact": 9,
+      "effort": "S",
+      "roi": 9.0
+    },
+    {
+      "rank": 2,
+      "category": "E",
+      "action": "package.json에 ESLint 설정과 `npm run lint` 스크립트 추가",
+      "rationale": "린트/포매터 설정이 전무해 에이전트가 만든 변경의 스타일 일관성을 자동 검증할 방법이 없다(E2 0점).",
+      "impact": 5,
+      "effort": "S",
+      "roi": 5.0
+    },
+    {
+      "rank": 3,
+      "category": "A",
+      "action": "README.md 최상단에 레포 개요(이 레포가 「Node.js Design Patterns」 학습 코드임)와 chapters/ 14개 디렉토리 ↔ 책 장(chapter) 매핑 표 추가",
+      "rationale": "현재 README는 무관한 Express 스타터 문구뿐이라 에이전트가 레포 목적과 탐색 시작점을 전혀 파악할 수 없다(A1, A2 0점).",
+      "impact": 11,
+      "effort": "M",
+      "roi": 3.7
+    },
+    {
+      "rank": 4,
+      "category": "E",
+      "action": "package.json에 chapters/chapter10_test 하위 *.test.mjs를 일괄 실행하는 `npm test` 스크립트 추가, CI(playwright.yml)에도 해당 스텝 반영",
+      "rationale": "테스트 파일은 존재하지만 실행 진입점이 없고 CI는 e2e 스펙 2개만 검증해 검증 게이트로서 기능이 약하다(E1 1점, E3 2점).",
+      "impact": 7,
+      "effort": "M",
+      "roi": 2.3
+    },
+    {
+      "rank": 5,
+      "category": "C",
+      "action": "chapters/ 아래 14개 챕터 각각에 짧은 개요 md(무엇을 다루는지, 관련 기존 study.txt/idea.md 링크)를 새로 추가 — 기존 코드/노트 파일은 그대로 두고 신규 인덱스 파일만 생성",
+      "rationale": "study.txt/idea.md 노트가 6개 챕터에만 흩어져 있고 색인이 없어 에이전트가 각 폴더 목적을 코드만 보고 추측해야 한다(A2, C3, C4 감점 근거).",
+      "impact": 12,
+      "effort": "L",
+      "roi": 1.5
+    }
+  ]
+}

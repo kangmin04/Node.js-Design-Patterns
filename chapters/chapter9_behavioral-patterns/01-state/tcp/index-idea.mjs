@@ -15,6 +15,7 @@ class tcp{ //abstract class OR interface
 //strategy OR state
 class tcpAvailable extends tcp{
     constructor(tcpSocket){
+        super()
         this.tcpSocket = tcpSocket
     }
     write(data){
@@ -25,7 +26,8 @@ class tcpAvailable extends tcp{
 
 class tcpUnavailable extends tcp{
     constructor(queue){
-        this.queue = queue; 
+        super()
+        this.queue = queue;
     }
     write(data){
         this.queue.push(data); 

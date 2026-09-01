@@ -1,3 +1,5 @@
+import { createAsyncCancelable } from './asyncCancelable.mjs';
+
 // 1. 하위 자식 작업
 const childTask = createAsyncCancelable(function* (name) {
   try {

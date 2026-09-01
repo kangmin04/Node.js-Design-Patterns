@@ -27,7 +27,7 @@ suite('getpagelinks' , {concurrency: true, timeout: 500}, async() => {
           </body>
         </html>
       `
-      /* global fetch를 mock. -> fetch call 시 미리 설정해둔 값으로 리턴가능  */
+      /* 전역(global) fetch를 mock. -> fetch call 시 미리 설정해둔 값으로 리턴가능  */
       t.mock.method(global, 'fetch', async _url => ({ 
         ok: true,
         status: 200,

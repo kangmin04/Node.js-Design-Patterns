@@ -11,8 +11,10 @@ class CancelationError extends Error {
       const generator = generatorFn(...args);
       let currentChild = null; // 현재 대기 중인 자식 cancelable 객체를 추적
       let isCanceled = false;
-  
+      let rejectPromise; // cancel()에서도 reject를 호출할 수 있도록 바깥 스코프에 보관
+
       const promise = new Promise((resolve, reject) => {
+        rejectPromise = reject;
         // 제너레이터를 한 단계씩 진행시키는 내부 함수
         function step(verb, arg) {
           if (isCanceled) return; // 이미 취소되었다면 진행 중단
@@ -72,7 +74,7 @@ class CancelationError extends Error {
             // 종료 과정에서의 에러 처리
           }
   
-          reject(new CancelationError());
+          rejectPromise(new CancelationError());
         }
       };
     };

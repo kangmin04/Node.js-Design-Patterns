@@ -9,9 +9,9 @@ export const check1 = new Transform({objectMode : true ,
         if(!(chunk.year in yearCount)){
             yearCount[chunk.year] = 1; 
         }else{
-            yearCount[chunk.year]+=1; 
-            findMaxYear(max , yearCount[chunk.year] , chunk.year)
-            
+            yearCount[chunk.year]+=1;
+            max = findMaxYear(max , yearCount[chunk.year] , chunk.year)
+
         }
         cb(); 
     } , 
@@ -24,9 +24,10 @@ check1.on('finish' , () => {
     console.log( 'question1 : ',maxYear , yearCount[maxYear] , yearCount )
     maxYear = 0 ; max = 0 ; yearCount = {}; 
 })
-function findMaxYear(max , currentYearNum , currentYear){
-    if(max < currentYearNum){
-        max = currentYearNum ; 
+function findMaxYear(currentMax , currentYearNum , currentYear){
+    if(currentMax < currentYearNum){
         maxYear = currentYear
+        return currentYearNum
     }
+    return currentMax
 }

@@ -1,6 +1,8 @@
 /*
-    factory 적용 안한경우 : 
+    factory 적용 안한경우 :
+    FileLogger/ConsoleLogger는 실제 구현 없이 개념 설명을 위한 가상의 클래스다.
 */
+/* eslint-disable no-undef -- 개념 설명용 가상 클래스, 실행 대상 아님 */
 let logger;
 if (process.env.NODE_ENV === 'production') {
   logger = new FileLogger();

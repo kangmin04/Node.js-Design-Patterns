@@ -14,9 +14,11 @@ const RESET = '\x1b[0m'
 // }
 
 
+// 의도된 실험: namespace import(loggerModule)의 멤버도 재할당 불가 -> TypeError로 실패하는 것을 확인하기 위한 코드
+// eslint-disable-next-line no-import-assign
 loggerModule.logger = {
     info : (message) => {
         console.log(`${GREEN}${message}${RESET}`)
-    
+
     }
 }

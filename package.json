@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "start:nginx": "mkdir -p chapters/chapter12_scalability/01-cluster/05-nginx/logs && nginx -p $(pwd)/chapters/chapter12_scalability/01-cluster/05-nginx/ -c nginx.conf"
+    "start:nginx": "mkdir -p chapters/chapter12_scalability/01-cluster/05-nginx/logs && nginx -p $(pwd)/chapters/chapter12_scalability/01-cluster/05-nginx/ -c nginx.conf",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -47,9 +48,12 @@
     "zeromq": "^6.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.4.0",
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0",
     "nodemon": "^3.0.1"
   }
 }

@@ -30,7 +30,7 @@ function recursiveFind(dir , keyword , cb){
             }
             if(stats.isDirectory()){
                 readdir(path , (err , files) => {
-                    if(err) return complete(err); 
+                    if(err) return cb(err);
                     // 찾은 파일들 -> queue에다가 넣어서 작업하기. 
                     files.forEach((file) => {
                         tasks.push(join(path , file)); 
@@ -47,7 +47,7 @@ function recursiveFind(dir , keyword , cb){
             return cb(artificialError);
           }
           // -------------------------
-                    if(err) return complete(err); 
+                    if(err) return cb(err);
                     if(data.includes(keyword)){
                         results.push(path); 
                     }

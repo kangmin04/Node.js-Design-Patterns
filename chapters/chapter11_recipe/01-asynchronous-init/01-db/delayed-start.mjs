@@ -1,3 +1,5 @@
+import { db } from "./db.mjs";
+
 async function getConnectedDb(){
     await db.connect(); 
     return db; 

@@ -10,7 +10,7 @@ const loggingHandler = {
             }
         }
 
-        return originMethod;
+        return target[property];
     }
 }
 const createLogProxy = new Proxy(console , loggingHandler )
