@@ -6,7 +6,7 @@ const slowTask = (taskName, delay) => {
   return new Promise(resolve => {
     setTimeout(() => {
       console.log(`[${taskName}] 작업 완료!`);
-      // resolve(`'${taskName}'의 결과물`);
+      resolve(`'${taskName}'의 결과물`);
     }, delay);
   });
 };
